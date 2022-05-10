@@ -16,9 +16,9 @@ function shuffle(array) {
 exports.shuffle = shuffle;
 function findIndexAdjacent(array, predicate) {
     var first = array[0];
-    for (var index = 1; index < array.length; index++) {
+    for (var index = 1; index <= array.length; index++) {
         var second = array[index];
-        if (predicate(first, second)) {
+        if (!second || predicate(first, second)) {
             return index - 1;
         }
         first = second;

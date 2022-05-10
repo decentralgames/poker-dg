@@ -10,9 +10,9 @@ export function shuffle<Type>(array: Type[]) {
 
 export function findIndexAdjacent<Type>(array: Type[], predicate:(first: Type, second: Type) => boolean): number {
     let first = array[0]
-    for (let index = 1; index < array.length; index++) {
+    for (let index = 1; index <= array.length; index++) {
         const second = array[index]
-        if (predicate(first, second)) {
+        if (!second || predicate(first, second)) {
             return index - 1
         }
         first = second
