@@ -33,6 +33,7 @@ export default class Table {
     button(): SeatIndex;
     seats(): SeatArray;
     handPlayers(): SeatArray;
+    positivePlayers(): boolean[];
     numActivePlayers(): number;
     pots(): Pot[];
     forcedBets(): ForcedBets;

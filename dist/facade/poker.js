@@ -105,6 +105,9 @@ var Poker = /** @class */ (function () {
     Poker.prototype.handPlayers = function () {
         return this._table.handPlayers().map(seatArrayMapper);
     };
+    Poker.prototype.positivePlayers = function () {
+        return this._table.positivePlayers();
+    };
     Poker.prototype.numActivePlayers = function () {
         return this._table.numActivePlayers();
     };

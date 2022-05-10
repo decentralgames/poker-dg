@@ -27,8 +27,8 @@ export default class BettingRound {
     private _biggestBet: Chips
     private _minRaise: Chips
 
-    constructor(players: SeatArray, firstToAct: SeatIndex, minRaise: Chips, biggestBet: Chips = 0) {
-        this._round = new Round(players.map(player => !!player), firstToAct)
+    constructor(players: SeatArray, positivePlayers: boolean[], firstToAct: SeatIndex, minRaise: Chips, biggestBet: Chips = 0) {
+        this._round = new Round(players.map(player => !!player), positivePlayers, firstToAct)
         this._players = players
         this._biggestBet = biggestBet
         this._minRaise = minRaise
@@ -65,6 +65,10 @@ export default class BettingRound {
 
     activePlayers(): boolean[] {
         return this._round.activePlayers()
+    }
+
+    positivePlayers(): boolean[] {
+        return this._round.positivePlayers()
     }
 
     numActivePlayers(): number {
@@ -107,7 +111,7 @@ export default class BettingRound {
             this._round.actionTaken(actionFlag)
         } else {
             assert(action === Action.LEAVE)
-            this._round.actionTaken(RoundAction.LEAVE)
+            this._round.actionTaken(RoundAction.LEAVE, true)
         }
     }
 

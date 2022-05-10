@@ -42,9 +42,9 @@ var ActionRange = /** @class */ (function () {
 }());
 exports.ActionRange = ActionRange;
 var BettingRound = /** @class */ (function () {
-    function BettingRound(players, firstToAct, minRaise, biggestBet) {
+    function BettingRound(players, positivePlayers, firstToAct, minRaise, biggestBet) {
         if (biggestBet === void 0) { biggestBet = 0; }
-        this._round = new round_1.default(players.map(function (player) { return !!player; }), firstToAct);
+        this._round = new round_1.default(players.map(function (player) { return !!player; }), positivePlayers, firstToAct);
         this._players = players;
         this._biggestBet = biggestBet;
         this._minRaise = minRaise;
@@ -74,6 +74,9 @@ var BettingRound = /** @class */ (function () {
     };
     BettingRound.prototype.activePlayers = function () {
         return this._round.activePlayers();
+    };
+    BettingRound.prototype.positivePlayers = function () {
+        return this._round.positivePlayers();
     };
     BettingRound.prototype.numActivePlayers = function () {
         return this._round.numActivePlayers();
@@ -117,7 +120,7 @@ var BettingRound = /** @class */ (function () {
         }
         else {
             assert_1.default(action === Action.LEAVE);
-            this._round.actionTaken(round_1.Action.LEAVE);
+            this._round.actionTaken(round_1.Action.LEAVE, true);
         }
     };
     BettingRound.prototype.standUp = function (seat) {

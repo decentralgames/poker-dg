@@ -12,11 +12,12 @@ var Action;
     Action[Action["AGGRESSIVE"] = 4] = "AGGRESSIVE";
 })(Action = exports.Action || (exports.Action = {}));
 var Round = /** @class */ (function () {
-    function Round(activePlayers, firstToAct) {
+    function Round(activePlayers, positivePlayers, firstToAct) {
         this._contested = false;
         this._firstAction = true;
         this._numActivePlayers = 0;
         this._activePlayers = activePlayers;
+        this._positivePlayers = positivePlayers;
         this._playerToAct = firstToAct;
         this._lastAggressiveActor = firstToAct;
         this._numActivePlayers = activePlayers.filter(function (player) { return !!player; }).length;
@@ -24,6 +25,9 @@ var Round = /** @class */ (function () {
     }
     Round.prototype.activePlayers = function () {
         return this._activePlayers;
+    };
+    Round.prototype.positivePlayers = function () {
+        return this._positivePlayers;
     };
     Round.prototype.playerToAct = function () {
         return this._playerToAct;
@@ -40,7 +44,8 @@ var Round = /** @class */ (function () {
     Round.prototype.isContested = function () {
         return this._contested;
     };
-    Round.prototype.actionTaken = function (action) {
+    Round.prototype.actionTaken = function (action, isRealLeave) {
+        if (isRealLeave === void 0) { isRealLeave = false; }
         assert_1.default(this.inProgress());
         assert_1.default(!(action & Action.PASSIVE && action & Action.AGGRESSIVE));
         if (this._firstAction) {
@@ -56,12 +61,16 @@ var Round = /** @class */ (function () {
         }
         if (action & Action.LEAVE) {
             this._activePlayers[this._playerToAct] = false;
+            if (isRealLeave) {
+                this._positivePlayers[this._playerToAct] = false;
+            }
             --this._numActivePlayers;
         }
         this.incrementPlayer();
     };
     Round.prototype.standUp = function (seat) {
         this._activePlayers[seat] = false;
+        this._positivePlayers[seat] = false;
         this._numActivePlayers = this._activePlayers.filter(function (player) { return !!player; }).length;
     };
     Round.prototype.incrementPlayer = function () {

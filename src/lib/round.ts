@@ -9,14 +9,16 @@ export enum Action {
 
 export default class Round {
     private readonly _activePlayers: boolean[]
+    private readonly _positivePlayers: boolean[]
     private _playerToAct: SeatIndex
     private _lastAggressiveActor: SeatIndex
     private _contested: boolean = false;
     private _firstAction: boolean = true;
     private _numActivePlayers: number = 0;
 
-    constructor(activePlayers: boolean[], firstToAct: SeatIndex) {
+    constructor(activePlayers: boolean[], positivePlayers: boolean[], firstToAct: SeatIndex) {
         this._activePlayers = activePlayers
+        this._positivePlayers = positivePlayers
         this._playerToAct = firstToAct;
         this._lastAggressiveActor = firstToAct;
         this._numActivePlayers = activePlayers.filter(player => !!player).length;
@@ -26,6 +28,10 @@ export default class Round {
 
     activePlayers(): boolean[] {
         return this._activePlayers;
+    }
+
+    positivePlayers(): boolean[] {
+        return this._positivePlayers;
     }
 
     playerToAct(): SeatIndex {
@@ -48,7 +54,7 @@ export default class Round {
         return this._contested;
     }
 
-    actionTaken(action: Action): void {
+    actionTaken(action: Action, isRealLeave: boolean = false): void {
         assert(this.inProgress())
         assert(!(action & Action.PASSIVE && action & Action.AGGRESSIVE))
 
@@ -66,6 +72,9 @@ export default class Round {
 
         if (action & Action.LEAVE) {
             this._activePlayers[this._playerToAct] = false;
+            if (isRealLeave) {
+                this._positivePlayers[this._playerToAct] = false;
+            }
             --this._numActivePlayers;
         }
 
@@ -74,6 +83,7 @@ export default class Round {
 
     standUp(seat: number): void {
         this._activePlayers[seat] = false;
+        this._positivePlayers[seat] = false;
         this._numActivePlayers = this._activePlayers.filter(player => !!player).length;
     }
 

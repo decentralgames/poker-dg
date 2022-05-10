@@ -93,6 +93,10 @@ export default class Poker {
         return this._table.handPlayers().map(seatArrayMapper)
     }
 
+    positivePlayers(): boolean[] {
+        return this._table.positivePlayers()
+    }
+
     numActivePlayers(): number {
         return this._table.numActivePlayers()
     }

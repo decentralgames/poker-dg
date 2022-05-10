@@ -17,7 +17,7 @@ export default class BettingRound {
     private _round;
     private _biggestBet;
     private _minRaise;
-    constructor(players: SeatArray, firstToAct: SeatIndex, minRaise: Chips, biggestBet?: Chips);
+    constructor(players: SeatArray, positivePlayers: boolean[], firstToAct: SeatIndex, minRaise: Chips, biggestBet?: Chips);
     inProgress(): boolean;
     isContested(): boolean;
     playerToAct(): SeatIndex;
@@ -25,6 +25,7 @@ export default class BettingRound {
     minRaise(): Chips;
     players(): SeatArray;
     activePlayers(): boolean[];
+    positivePlayers(): boolean[];
     numActivePlayers(): number;
     legalActions(): ActionRange;
     actionTaken(action: Action, bet?: Chips): void;
