@@ -34,6 +34,7 @@ var pot_manager_1 = __importDefault(require("./pot-manager"));
 var assert_1 = __importDefault(require("assert"));
 var hand_1 = __importDefault(require("./hand"));
 var array_1 = require("../util/array");
+var player_1 = __importDefault(require("./player"));
 var ActionRange = /** @class */ (function () {
     function ActionRange(chipRange) {
         this.action = Action.FOLD; // You can always fold
@@ -257,7 +258,7 @@ var Dealer = /** @class */ (function () {
             var player = this._players[index];
             assert_1.default(player !== null);
             player.addToStack(this._potManager.pots()[0].size());
-            return;
+            return this._players;
             // TODO: Also, no reveals in this case. Reveals are only necessary when there is >=2 players.
         }
         var _loop_1 = function (pot) {
@@ -281,7 +282,13 @@ var Dealer = /** @class */ (function () {
             winningPlayerResults.forEach(function (playerResult) {
                 var _a;
                 var seatIndex = playerResult[0];
-                (_a = _this._players[seatIndex]) === null || _a === void 0 ? void 0 : _a.addToStack(payout);
+                if (!_this._players[seatIndex]) {
+                    // make sure players who went all-in and won a pot are still rewarded
+                    _this._players[seatIndex] = new player_1.default(payout);
+                }
+                else {
+                    (_a = _this._players[seatIndex]) === null || _a === void 0 ? void 0 : _a.addToStack(payout);
+                }
             });
             this_1._winners.push(winningPlayerResults.map(function (playerResult) {
                 var seatIndex = playerResult[0];
@@ -310,6 +317,7 @@ var Dealer = /** @class */ (function () {
             var pot = _a[_i];
             _loop_1(pot);
         }
+        return this._players;
     };
     Dealer.prototype.nextOrWrap = function (seat) {
         return array_1.nextOrWrap(this._players, seat);

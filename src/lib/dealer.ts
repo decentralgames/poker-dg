@@ -13,6 +13,7 @@ import Pot from './pot'
 import Hand, { HandRanking } from './hand'
 import { findIndexAdjacent, nextOrWrap } from '../util/array'
 import Card from './card'
+import Player from './player'
 
 export class ActionRange {
     action: Action = Action.FOLD // You can always fold
@@ -248,7 +249,7 @@ export default class Dealer {
         return this._winners
     }
 
-    showdown(): void {
+    showdown(): SeatArray {
         assert(this._roundOfBetting === RoundOfBetting.RIVER, 'Round of betting must be river')
         assert(!this.bettingRoundInProgress(), 'Betting round must not be in progress')
         assert(this.bettingRoundsCompleted(), 'Betting rounds must be completed')
@@ -260,7 +261,7 @@ export default class Dealer {
             const player = this._players[index]
             assert(player !== null)
             player.addToStack(this._potManager.pots()[0].size())
-            return
+            return this._players;
 
             // TODO: Also, no reveals in this case. Reveals are only necessary when there is >=2 players.
         }
@@ -282,7 +283,13 @@ export default class Dealer {
 
             winningPlayerResults.forEach((playerResult: [SeatIndex, Hand]) => {
                 const [seatIndex] = playerResult
-                this._players[seatIndex]?.addToStack(payout)
+
+                if (!this._players[seatIndex]) {
+                  // make sure players who went all-in and won a pot are still rewarded
+                  this._players[seatIndex] = new Player(payout);
+                } else {
+                    this._players[seatIndex]?.addToStack(payout)
+                }
             })
 
             this._winners.push(winningPlayerResults.map((playerResult: [SeatIndex, Hand]) => {
@@ -310,6 +317,8 @@ export default class Dealer {
                 }
             }
         }
+
+        return this._players;
     }
 
     private nextOrWrap(seat: SeatIndex): SeatIndex {

@@ -57,7 +57,7 @@ export default class Dealer {
     endBettingRound(): void;
     standUp(seat: number): void;
     winners(): [SeatIndex, Hand, HoleCards][][];
-    showdown(): void;
+    showdown(): SeatArray;
     private nextOrWrap;
     private collectAnte;
     private postBlinds;

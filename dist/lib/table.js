@@ -181,7 +181,7 @@ var Table = /** @class */ (function () {
         assert_1.default(!this.bettingRoundInProgress(), 'Betting round must not be in progress');
         assert_1.default(this.bettingRoundsCompleted(), 'Betting rounds must be completed');
         assert_1.default(this._dealer !== undefined);
-        this._dealer.showdown();
+        this._handPlayers = this._dealer.showdown();
         this.updateTablePlayers();
         this.standUpBustedPlayers();
     };

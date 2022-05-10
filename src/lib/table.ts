@@ -217,7 +217,7 @@ export default class Table {
         assert(this.bettingRoundsCompleted(), 'Betting rounds must be completed')
         assert(this._dealer !== undefined)
 
-        this._dealer.showdown()
+        this._handPlayers = this._dealer.showdown()
         this.updateTablePlayers()
         this.standUpBustedPlayers()
     }
