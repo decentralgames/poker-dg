@@ -299,8 +299,7 @@ export default class Table {
         assert(seat < this._numSeats && seat >= 0, 'Given seat index must be valid')
         assert(this._tablePlayers[seat] !== null, 'Given seat must be occupied')
 
-        if (this.handInProgress()) {
-            assert(this.bettingRoundInProgress())
+        if (this.handInProgress() && this.bettingRoundInProgress()) {
             assert(this._handPlayers !== undefined)
             if (seat === this.playerToAct()) {
                 this.actionTaken(Action.FOLD)

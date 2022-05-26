@@ -251,8 +251,7 @@ var Table = /** @class */ (function () {
         var _a;
         assert_1.default(seat < this._numSeats && seat >= 0, 'Given seat index must be valid');
         assert_1.default(this._tablePlayers[seat] !== null, 'Given seat must be occupied');
-        if (this.handInProgress()) {
-            assert_1.default(this.bettingRoundInProgress());
+        if (this.handInProgress() && this.bettingRoundInProgress()) {
             assert_1.default(this._handPlayers !== undefined);
             if (seat === this.playerToAct()) {
                 this.actionTaken(dealer_1.Action.FOLD);
