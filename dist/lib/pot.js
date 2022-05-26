@@ -38,8 +38,12 @@ var Pot = /** @class */ (function () {
             // Find the smallest player bet on the table.
             var firstBetter = players[firstBetterIndex];
             assert_1.default(firstBetter !== null);
-            var minBet_1 = players.slice(firstBetterIndex + 1).reduce(function (acc, player) {
-                if (player !== null && player.betSize() !== 0 && player.betSize() < acc)
+            var minBet_1 = players
+                .slice(firstBetterIndex + 1)
+                .reduce(function (acc, player) {
+                if (player !== null &&
+                    player.betSize() !== 0 &&
+                    player.betSize() < acc)
                     acc = player.betSize();
                 return acc;
             }, firstBetter.betSize());

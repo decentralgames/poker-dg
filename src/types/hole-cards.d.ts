@@ -1,3 +1,3 @@
-import Card from '../lib/card'
+import Card from '../lib/card';
 
-export type HoleCards = [Card, Card]
+export type HoleCards = [Card, Card];

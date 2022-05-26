@@ -1,4 +1,4 @@
-import { Chips } from "types/chips";
+import { Chips } from 'types/chips';
 export default class ChipRange {
     min: Chips;
     max: Chips;

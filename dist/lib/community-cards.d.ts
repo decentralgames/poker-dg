@@ -1,4 +1,4 @@
-import Card from "./card";
+import Card from './card';
 export declare enum RoundOfBetting {
     PREFLOP = 0,
     FLOP = 3,

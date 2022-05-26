@@ -58,11 +58,15 @@ export default class Poker {
     actionTaken(action: 'fold' | 'check' | 'call' | 'bet' | 'raise', betSize?: number): void;
     endBettingRound(): void;
     showdown(): void;
-    winners(): [SeatIndex, {
-        cards: Card[];
-        ranking: HandRanking;
-        strength: number;
-    }, Card[]][][];
+    winners(): [
+        SeatIndex,
+        {
+            cards: Card[];
+            ranking: HandRanking;
+            strength: number;
+        },
+        Card[]
+    ][][];
     automaticActions(): any;
     canSetAutomaticActions(seatIndex: number): boolean;
     legalAutomaticActions(seatIndex: number): AutomaticAction[];

@@ -1,3 +1,3 @@
-import Player from "../lib/player";
+import Player from '../lib/player';
 
-export type SeatArray = Array<Player | null>
+export type SeatArray = Array<Player | null>;

@@ -82,7 +82,7 @@ var Dealer = /** @class */ (function () {
         // Method for counting bits in a 32-bit integer from https://graphics.stanford.edu/~seander/bithacks.html
         action = action - ((action >> 1) & 0x55555555);
         action = (action & 0x33333333) + ((action >> 2) & 0x33333333);
-        var bitCount = ((action + (action >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
+        var bitCount = (((action + (action >> 4)) & 0xf0f0f0f) * 0x1010101) >> 24;
         return bitCount === 1;
     };
     Dealer.isAggressive = function (action) {
@@ -180,7 +180,8 @@ var Dealer = /** @class */ (function () {
         this.collectAnte();
         var firstAction = this.nextOrWrap(this.postBlinds());
         this.dealHoleCards();
-        if (this._players.filter(function (player) { return player !== null && player.stack() !== 0; }).length > 1) {
+        if (this._players.filter(function (player) { return player !== null && player.stack() !== 0; })
+            .length > 1) {
             this._bettingRound = new betting_round_1.default(__spreadArray([], this._players), this._players.map(function (player) { return !!player; }), firstAction, this._forcedBets.blinds.big, this._forcedBets.blinds.big);
         }
         this._handInProgress = true;
@@ -213,7 +214,8 @@ var Dealer = /** @class */ (function () {
         if (((_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.numActivePlayers()) !== null && _b !== void 0 ? _b : 0) <= 1) {
             this._roundOfBetting = community_cards_1.RoundOfBetting.RIVER;
             // If there is only one pot, and there is only one player in it...
-            if (this._potManager.pots().length === 1 && this._potManager.pots()[0].eligiblePlayers().length === 1) {
+            if (this._potManager.pots().length === 1 &&
+                this._potManager.pots()[0].eligiblePlayers().length === 1) {
                 // ...there is no need to deal the undealt community cards.
             }
             else {
@@ -252,7 +254,8 @@ var Dealer = /** @class */ (function () {
         assert_1.default(!this.bettingRoundInProgress(), 'Betting round must not be in progress');
         assert_1.default(this.bettingRoundsCompleted(), 'Betting rounds must be completed');
         this._handInProgress = false;
-        if (this._potManager.pots().length === 1 && this._potManager.pots()[0].eligiblePlayers().length === 1) {
+        if (this._potManager.pots().length === 1 &&
+            this._potManager.pots()[0].eligiblePlayers().length === 1) {
             // No need to evaluate the hand. There is only one player.
             var index = this._potManager.pots()[0].eligiblePlayers()[0];
             var player = this._players[index];
@@ -262,8 +265,13 @@ var Dealer = /** @class */ (function () {
             // TODO: Also, no reveals in this case. Reveals are only necessary when there is >=2 players.
         }
         var _loop_1 = function (pot) {
-            var playerResults = pot.eligiblePlayers().map(function (seatIndex) {
-                return [seatIndex, hand_1.default.create(_this._holeCards[seatIndex], _this._communityCards)];
+            var playerResults = pot
+                .eligiblePlayers()
+                .map(function (seatIndex) {
+                return [
+                    seatIndex,
+                    hand_1.default.create(_this._holeCards[seatIndex], _this._communityCards),
+                ];
             });
             playerResults.sort(function (_a, _b) {
                 var first = _a[1];

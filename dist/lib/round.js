@@ -39,7 +39,8 @@ var Round = /** @class */ (function () {
         return this._numActivePlayers;
     };
     Round.prototype.inProgress = function () {
-        return (this._contested || this._numActivePlayers > 1) && (this._firstAction || this._playerToAct !== this._lastAggressiveActor);
+        return ((this._contested || this._numActivePlayers > 1) &&
+            (this._firstAction || this._playerToAct !== this._lastAggressiveActor));
     };
     Round.prototype.isContested = function () {
         return this._contested;
