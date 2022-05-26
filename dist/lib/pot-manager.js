@@ -26,7 +26,8 @@ var PotManager = /** @class */ (function () {
             var aggregateFoldedBetsConsumedAmount = Math.min(this._aggregateFoldedBets, numberOfEligiblePlayers * minBet);
             this._pots[this._pots.length - 1].add(aggregateFoldedBetsConsumedAmount);
             this._aggregateFoldedBets -= aggregateFoldedBetsConsumedAmount;
-            if (players.filter(function (player) { return player !== null && player.betSize() !== 0; }).length) {
+            if (players.filter(function (player) { return player !== null && player.betSize() !== 0; })
+                .length) {
                 this._pots.push(new pot_1.default());
                 continue;
             }

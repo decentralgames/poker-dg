@@ -103,7 +103,9 @@ var Table = /** @class */ (function () {
         }
         this._staged = new Array(this._numSeats).fill(false);
         this._automaticActions = new Array(this._numSeats).fill(null);
-        this._handPlayers = this._tablePlayers.map(function (player) { return player ? new player_1.default(player) : null; });
+        this._handPlayers = this._tablePlayers.map(function (player) {
+            return player ? new player_1.default(player) : null;
+        });
         this.incrementButton();
         this._deck.fillAndShuffle();
         this._communityCards = new community_cards_1.default();
@@ -251,8 +253,7 @@ var Table = /** @class */ (function () {
         var _a;
         assert_1.default(seat < this._numSeats && seat >= 0, 'Given seat index must be valid');
         assert_1.default(this._tablePlayers[seat] !== null, 'Given seat must be occupied');
-        if (this.handInProgress()) {
-            assert_1.default(this.bettingRoundInProgress());
+        if (this.handInProgress() && this.bettingRoundInProgress()) {
             assert_1.default(this._handPlayers !== undefined);
             if (seat === this.playerToAct()) {
                 this.actionTaken(dealer_1.Action.FOLD);
@@ -318,9 +319,10 @@ var Table = /** @class */ (function () {
                 else if (automaticAction & AutomaticAction.CHECK && betGap > 0) {
                     this._automaticActions[s] = null;
                 } /* else if (automaticAction & AutomaticAction.CALL && isContested) {
-                    this._automaticActions[s] = null
-                }*/
-                else if (automaticAction & AutomaticAction.CALL_ANY && biggestBet >= totalChips) {
+                            this._automaticActions[s] = null
+                        }*/
+                else if (automaticAction & AutomaticAction.CALL_ANY &&
+                    biggestBet >= totalChips) {
                     this._automaticActions[s] = AutomaticAction.CALL;
                 }
             }
@@ -354,10 +356,13 @@ var Table = /** @class */ (function () {
         }
         else {
             var offset = this._button + 1;
-            var seat = this._handPlayers.slice(offset).findIndex(function (player) { return player !== null; });
-            this._button = seat !== -1
-                ? seat + offset
-                : this._handPlayers.findIndex(function (player) { return player !== null; });
+            var seat = this._handPlayers
+                .slice(offset)
+                .findIndex(function (player) { return player !== null; });
+            this._button =
+                seat !== -1
+                    ? seat + offset
+                    : this._handPlayers.findIndex(function (player) { return player !== null; });
         }
     };
     Table.prototype.clearFoldedBets = function () {
@@ -365,7 +370,10 @@ var Table = /** @class */ (function () {
         for (var s = 0; s < this._numSeats; s++) {
             var handPlayer = this._handPlayers[s];
             var tablePlayer = this._tablePlayers[s];
-            if (!this._staged[s] && handPlayer === null && tablePlayer !== null && tablePlayer.betSize() > 0) {
+            if (!this._staged[s] &&
+                handPlayer === null &&
+                tablePlayer !== null &&
+                tablePlayer.betSize() > 0) {
                 // Has folded bet
                 assert_1.default(this._tablePlayers[s] !== null);
                 this._tablePlayers[s] = new player_1.default(tablePlayer.stack());

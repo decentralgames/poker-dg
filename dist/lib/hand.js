@@ -120,7 +120,9 @@ var Hand = /** @class */ (function () {
         cards.sort(card_1.default.compare);
         var first = 0;
         for (;;) {
-            var last = cards.slice(first + 1).findIndex(function (card) { return card.suit !== cards[first].suit; });
+            var last = cards
+                .slice(first + 1)
+                .findIndex(function (card) { return card.suit !== cards[first].suit; });
             if (last === -1) {
                 last = cards.length;
             }

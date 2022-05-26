@@ -1,3 +1,3 @@
-import Poker from './facade/poker'
+import Poker from './facade/poker';
 
-export const Table = Poker
+export const Table = Poker;

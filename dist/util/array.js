@@ -42,7 +42,9 @@ function rotate(array, count) {
 exports.rotate = rotate;
 // Remove consecutive (adjacent) duplicates
 function unique(array, predicate) {
-    if (predicate === void 0) { predicate = function (first, second) { return first !== second; }; }
+    if (predicate === void 0) { predicate = function (first, second) {
+        return first !== second;
+    }; }
     if (array.length === 0) {
         return array;
     }

@@ -1,1 +1,1 @@
-export type SeatIndex = number
+export type SeatIndex = number;

@@ -35,13 +35,15 @@ var cardMapper = function (card) { return ({
     // @ts-ignore
     suit: card_1.CardSuit[card.suit].toLowerCase(),
 }); };
-var seatArrayMapper = function (player) { return player === null
-    ? null
-    : {
-        totalChips: player.totalChips(),
-        stack: player.stack(),
-        betSize: player.betSize(),
-    }; };
+var seatArrayMapper = function (player) {
+    return player === null
+        ? null
+        : {
+            totalChips: player.totalChips(),
+            stack: player.stack(),
+            betSize: player.betSize(),
+        };
+};
 var actionFlagToStringArray = function (actionFlag) {
     var actions = [];
     if (actionFlag & dealer_1.Action.FOLD)
@@ -161,9 +163,7 @@ var Poker = /** @class */ (function () {
     };
     Poker.prototype.holeCards = function () {
         return this._table.holeCards().map(function (cards) {
-            return cards === null
-                ? null
-                : cards.map(cardMapper);
+            return cards === null ? null : cards.map(cardMapper);
         });
     };
     Poker.prototype.playerCards = function (seat) {
@@ -180,18 +180,20 @@ var Poker = /** @class */ (function () {
         this._table.showdown();
     };
     Poker.prototype.winners = function () {
-        return this._table.winners().map(function (potWinners) { return potWinners.map(function (winner) {
-            var seatIndex = winner[0], hand = winner[1], holeCards = winner[2];
-            return [
-                seatIndex,
-                {
-                    cards: hand.cards().map(cardMapper),
-                    ranking: hand.ranking(),
-                    strength: hand.strength(),
-                },
-                holeCards.map(cardMapper),
-            ];
-        }); });
+        return this._table.winners().map(function (potWinners) {
+            return potWinners.map(function (winner) {
+                var seatIndex = winner[0], hand = winner[1], holeCards = winner[2];
+                return [
+                    seatIndex,
+                    {
+                        cards: hand.cards().map(cardMapper),
+                        ranking: hand.ranking(),
+                        strength: hand.strength(),
+                    },
+                    holeCards.map(cardMapper),
+                ];
+            });
+        });
     };
     Poker.prototype.automaticActions = function () {
         return this._table.automaticActions().map(function (action) {

@@ -1,1 +1,1 @@
-export type Chips = number
+export type Chips = number;

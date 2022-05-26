@@ -156,10 +156,10 @@ describe('Poker facade', () => {
       poker.actionTaken('check');
       poker.actionTaken('check');
       poker.endBettingRound();
-    //   console.log(poker.pots());
+      //   console.log(poker.pots());
 
       poker.showdown();
-    //   console.log(poker.seats());
+      //   console.log(poker.seats());
 
       const seats = poker.seats();
       const chipSum = seats.reduce((a, b) => a + (b?.totalChips ?? 0), 0);
