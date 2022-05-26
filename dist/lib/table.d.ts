@@ -7,6 +7,7 @@ import Pot from './pot';
 import { HoleCards } from 'types/hole-cards';
 import { Chips } from 'types/chips';
 import Hand from './hand';
+import { Blinds } from 'types/blinds';
 export declare enum AutomaticAction {
     FOLD = 1,
     CHECK_FOLD = 2,
@@ -31,6 +32,7 @@ export default class Table {
     constructor(forcedBets: ForcedBets, numSeats?: number);
     playerToAct(): SeatIndex;
     button(): SeatIndex;
+    blinds(): Blinds;
     seats(): SeatArray;
     handPlayers(): SeatArray;
     positivePlayers(): boolean[];

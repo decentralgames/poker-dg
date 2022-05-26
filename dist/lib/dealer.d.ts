@@ -8,6 +8,7 @@ import CommunityCards, { RoundOfBetting } from './community-cards';
 import { HoleCards } from 'types/hole-cards';
 import Pot from './pot';
 import Hand from './hand';
+import { Blinds } from 'types/blinds';
 export declare class ActionRange {
     action: Action;
     chipRange?: ChipRange;
@@ -24,6 +25,8 @@ export declare enum Action {
 export default class Dealer {
     private readonly _button;
     private readonly _communityCards;
+    private _smallBlindIndex;
+    private _bigBlindIndex;
     private _holeCards;
     private _players;
     private _bettingRound;
@@ -51,6 +54,7 @@ export default class Dealer {
     legalActions(): ActionRange;
     pots(): Pot[];
     button(): SeatIndex;
+    blinds(): Blinds;
     holeCards(): HoleCards[];
     startHand(): void;
     actionTaken(action: Action, bet?: Chips): void;

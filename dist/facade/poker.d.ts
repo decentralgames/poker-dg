@@ -1,6 +1,7 @@
 import ChipRange from '../lib/chip-range';
 import { SeatIndex } from 'types/seat-index';
 import { HandRanking } from '../lib/hand';
+import { Blinds } from 'types/blinds';
 declare type Card = {
     rank: '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'T' | 'J' | 'Q' | 'K' | 'A';
     suit: 'clubs' | 'diamonds' | 'hearts' | 'spades';
@@ -15,7 +16,8 @@ export default class Poker {
         smallBlind: number;
     }, numSeats?: number);
     playerToAct(): number;
-    button(): number;
+    button(): SeatIndex;
+    blinds(): Blinds;
     seats(): ({
         totalChips: number;
         stack: number;

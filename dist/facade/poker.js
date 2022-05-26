@@ -101,6 +101,9 @@ var Poker = /** @class */ (function () {
     Poker.prototype.button = function () {
         return this._table.button();
     };
+    Poker.prototype.blinds = function () {
+        return this._table.blinds();
+    };
     Poker.prototype.seats = function () {
         return this._table.seats().map(seatArrayMapper);
     };
