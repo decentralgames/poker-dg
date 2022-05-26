@@ -14,6 +14,7 @@ import Hand, { HandRanking } from './hand';
 import { findIndexAdjacent, nextOrWrap } from '../util/array';
 import Card from './card';
 import Player from './player';
+import { Blinds } from 'types/blinds';
 
 export class ActionRange {
   action: Action = Action.FOLD; // You can always fold
@@ -42,6 +43,8 @@ export enum Action {
 export default class Dealer {
   private readonly _button: SeatIndex = 0;
   private readonly _communityCards: CommunityCards;
+  private _smallBlindIndex: SeatIndex = 0;
+  private _bigBlindIndex: SeatIndex = 0;
   private _holeCards: HoleCards[];
   private _players: SeatArray;
   private _bettingRound: BettingRound | null = null;
@@ -177,6 +180,13 @@ export default class Dealer {
 
   button(): SeatIndex {
     return this._button;
+  }
+
+  blinds(): Blinds {
+    return {
+      small: this._smallBlindIndex,
+      big: this._bigBlindIndex,
+    };
   }
 
   holeCards(): HoleCards[] {
@@ -408,12 +418,14 @@ export default class Dealer {
     }
     const smallBlind = this._players[seat];
     assert(smallBlind !== null);
+    this._smallBlindIndex = seat;
     smallBlind.bet(
       Math.min(this._forcedBets.blinds.small, smallBlind.totalChips())
     );
     seat = this.nextOrWrap(seat);
     const bigBlind = this._players[seat];
     assert(bigBlind !== null);
+    this._bigBlindIndex = seat;
     bigBlind.bet(Math.min(this._forcedBets.blinds.big, bigBlind.totalChips()));
     return seat;
   }

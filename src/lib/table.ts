@@ -11,6 +11,7 @@ import { Chips } from 'types/chips';
 import { bitCount } from '../util/bit';
 import Player from './player';
 import Hand from './hand';
+import { Blinds } from 'types/blinds';
 
 export enum AutomaticAction {
   FOLD = 1 << 0,
@@ -57,6 +58,13 @@ export default class Table {
     assert(this._dealer !== undefined);
 
     return this._dealer.button();
+  }
+
+  blinds(): Blinds {
+    assert(this.handInProgress(), 'Hand must be in progress');
+    assert(this._dealer !== undefined);
+
+    return this._dealer.blinds();
   }
 
   seats(): SeatArray {

@@ -63,6 +63,8 @@ var Dealer = /** @class */ (function () {
     function Dealer(players, button, forcedBets, deck, communityCards, numSeats) {
         if (numSeats === void 0) { numSeats = 9; }
         this._button = 0;
+        this._smallBlindIndex = 0;
+        this._bigBlindIndex = 0;
         this._bettingRound = null;
         this._handInProgress = false;
         this._roundOfBetting = community_cards_1.RoundOfBetting.PREFLOP;
@@ -167,6 +169,12 @@ var Dealer = /** @class */ (function () {
     };
     Dealer.prototype.button = function () {
         return this._button;
+    };
+    Dealer.prototype.blinds = function () {
+        return {
+            small: this._smallBlindIndex,
+            big: this._bigBlindIndex,
+        };
     };
     Dealer.prototype.holeCards = function () {
         assert_1.default(this.handInProgress() || this.bettingRoundInProgress(), 'Hand must be in progress or showdown must have ended');
@@ -354,10 +362,12 @@ var Dealer = /** @class */ (function () {
         }
         var smallBlind = this._players[seat];
         assert_1.default(smallBlind !== null);
+        this._smallBlindIndex = seat;
         smallBlind.bet(Math.min(this._forcedBets.blinds.small, smallBlind.totalChips()));
         seat = this.nextOrWrap(seat);
         var bigBlind = this._players[seat];
         assert_1.default(bigBlind !== null);
+        this._bigBlindIndex = seat;
         bigBlind.bet(Math.min(this._forcedBets.blinds.big, bigBlind.totalChips()));
         return seat;
     };

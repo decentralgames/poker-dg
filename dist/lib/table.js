@@ -61,6 +61,11 @@ var Table = /** @class */ (function () {
         assert_1.default(this._dealer !== undefined);
         return this._dealer.button();
     };
+    Table.prototype.blinds = function () {
+        assert_1.default(this.handInProgress(), 'Hand must be in progress');
+        assert_1.default(this._dealer !== undefined);
+        return this._dealer.blinds();
+    };
     Table.prototype.seats = function () {
         return this._tablePlayers;
     };
