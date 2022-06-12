@@ -198,7 +198,7 @@ export default class Hand {
       ranking = HandRanking.FOUR_OF_A_KIND;
     } else if (count === 3) {
       const tmp = Hand.nextRank(cards.slice(count - cards.length));
-      if (tmp.count === 2) {
+      if (tmp.count >= 2) {
         ranking = HandRanking.FULL_HOUSE;
       } else {
         ranking = HandRanking.THREE_OF_A_KIND;
