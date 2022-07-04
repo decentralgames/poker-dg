@@ -25,6 +25,7 @@ export default class Hand {
     static create(holeCards: HoleCards, communityCards: CommunityCards): Hand;
     static of(cards: Card[]): Hand;
     static getRankingOf(cards: Card[]): HandRanking;
+    static getRankingListOf(cards: Card[]): HandRanking[];
     static compare(h1: Hand, h2: Hand): number;
     static nextRank(cards: Card[]): RankInfo;
     static getStrength(cards: Card[]): number;
@@ -32,6 +33,8 @@ export default class Hand {
     static getStraightCards(cards: Card[]): Card[] | null;
     static _highLowHandEval(cards: Card[], isRiverCheck?: boolean): Hand;
     static _straightFlushEval(cards: Card[], isRiverCheck?: boolean): Hand | null;
+    static _highLowHandList(cards: Card[], isRiverCheck?: boolean): HandRanking[];
+    static _straightFlushList(cards: Card[], isRiverCheck?: boolean): HandRanking[];
     ranking(): HandRanking;
     strength(): number;
     cards(): Card[];

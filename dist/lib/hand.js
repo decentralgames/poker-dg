@@ -74,6 +74,12 @@ var Hand = /** @class */ (function () {
         }
         return hand1.ranking();
     };
+    Hand.getRankingListOf = function (cards) {
+        assert_1.default(cards.length >= 5);
+        var rankings1 = Hand._highLowHandList(cards, false);
+        var rankings2 = Hand._straightFlushList(cards, false);
+        return __spreadArray(__spreadArray([], rankings2), rankings1);
+    };
     Hand.compare = function (h1, h2) {
         var rankingDiff = h2.ranking() - h1.ranking();
         if (rankingDiff !== 0) {
@@ -267,6 +273,79 @@ var Hand = /** @class */ (function () {
             }
         }
         return null;
+    };
+    Hand._highLowHandList = function (cards, isRiverCheck) {
+        if (isRiverCheck === void 0) { isRiverCheck = true; }
+        if (isRiverCheck) {
+            assert_1.default(cards.length === 7);
+        }
+        else {
+            assert_1.default(cards.length >= 5);
+        }
+        cards = __spreadArray([], cards);
+        var rankOccurrences = new Array(13).fill(0);
+        for (var _i = 0, cards_2 = cards; _i < cards_2.length; _i++) {
+            var card = cards_2[_i];
+            rankOccurrences[card.rank] += 1;
+        }
+        cards.sort(function (c1, c2) {
+            if (rankOccurrences[c1.rank] === rankOccurrences[c2.rank]) {
+                return c2.rank - c1.rank;
+            }
+            return rankOccurrences[c2.rank] - rankOccurrences[c1.rank];
+        });
+        var rankings = [];
+        var count = Hand.nextRank(cards).count;
+        var tmp = Hand.nextRank(cards.slice(count - cards.length));
+        if (count === 4) {
+            rankings.push(HandRanking.FOUR_OF_A_KIND);
+        }
+        if (count >= 3) {
+            rankings.push(HandRanking.THREE_OF_A_KIND);
+        }
+        if (count >= 3 && tmp.count >= 3) {
+            rankings.push(HandRanking.FULL_HOUSE);
+        }
+        if ((count === 4) || (count >= 2 && tmp.count >= 2)) {
+            rankings.push(HandRanking.TWO_PAIR);
+        }
+        if (count >= 2) {
+            rankings.push(HandRanking.PAIR);
+        }
+        rankings.push(HandRanking.HIGH_CARD);
+        return rankings;
+    };
+    Hand._straightFlushList = function (cards, isRiverCheck) {
+        if (isRiverCheck === void 0) { isRiverCheck = true; }
+        if (isRiverCheck) {
+            assert_1.default(cards.length === 7);
+        }
+        else {
+            assert_1.default(cards.length >= 5);
+        }
+        cards = __spreadArray([], cards);
+        var suitedCards = Hand.getSuitedCards(cards, isRiverCheck);
+        var rankings = [];
+        if (suitedCards !== null) {
+            var straightCards = this.getStraightCards(suitedCards);
+            if (straightCards !== null) {
+                ;
+                if (straightCards[0].rank === card_1.CardRank.A) {
+                    rankings.push(HandRanking.ROYAL_FLUSH);
+                }
+                rankings.push(HandRanking.STRAIGHT_FLUSH);
+            }
+            rankings.push(HandRanking.FLUSH);
+        }
+        cards.sort(function (c1, c2) { return c2.rank - c1.rank; });
+        cards = array_1.unique(cards, function (c1, c2) { return c1.rank !== c2.rank; });
+        if (cards.length >= 5) {
+            var straightCards = this.getStraightCards(cards);
+            if (straightCards !== null) {
+                rankings.push(HandRanking.STRAIGHT);
+            }
+        }
+        return rankings;
     };
     Hand.prototype.ranking = function () {
         return this._ranking;

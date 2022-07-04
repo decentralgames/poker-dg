@@ -66,6 +66,14 @@ export default class Hand {
     return hand1.ranking();
   }
 
+  static getRankingListOf(cards: Card[]): HandRanking[] {
+    assert(cards.length >= 5);
+    const rankings1 = Hand._highLowHandList(cards, false);
+    const rankings2 = Hand._straightFlushList(cards, false);
+
+    return [...rankings2, ...rankings1];
+  }
+
   static compare(h1: Hand, h2: Hand): number {
     const rankingDiff = h2.ranking() - h1.ranking();
     if (rankingDiff !== 0) {
@@ -267,6 +275,91 @@ export default class Hand {
     }
 
     return null;
+  }
+
+  static _highLowHandList(
+    cards: Card[],
+    isRiverCheck: boolean = true
+  ): HandRanking[] {
+    if (isRiverCheck) {
+      assert(cards.length === 7);
+    } else {
+      assert(cards.length >= 5);
+    }
+
+    cards = [...cards];
+
+    const rankOccurrences: number[] = new Array(13).fill(0);
+    for (const card of cards) {
+      rankOccurrences[card.rank] += 1;
+    }
+
+    cards.sort((c1, c2) => {
+      if (rankOccurrences[c1.rank] === rankOccurrences[c2.rank]) {
+        return c2.rank - c1.rank;
+      }
+      return rankOccurrences[c2.rank] - rankOccurrences[c1.rank];
+    });
+
+    const rankings: HandRanking[] = [];
+    const { count } = Hand.nextRank(cards);
+    const tmp = Hand.nextRank(cards.slice(count - cards.length));
+
+    if (count === 4) {
+      rankings.push(HandRanking.FOUR_OF_A_KIND);
+    }
+    if (count >= 3) {
+      rankings.push(HandRanking.THREE_OF_A_KIND);
+    }
+    if (count >= 3 && tmp.count >= 3) {
+      rankings.push(HandRanking.FULL_HOUSE);
+    }
+    if ((count === 4) || (count >= 2 && tmp.count >= 2)) {
+      rankings.push(HandRanking.TWO_PAIR);
+    }
+    if (count >= 2) {
+      rankings.push(HandRanking.PAIR);
+    }
+    rankings.push(HandRanking.HIGH_CARD);
+
+    return rankings;
+  }
+
+  static _straightFlushList(
+    cards: Card[],
+    isRiverCheck: boolean = true
+  ): HandRanking[] {
+    if (isRiverCheck) {
+      assert(cards.length === 7);
+    } else {
+      assert(cards.length >= 5);
+    }
+
+    cards = [...cards];
+    const suitedCards = Hand.getSuitedCards(cards, isRiverCheck);
+    const rankings: HandRanking[] = [];
+
+    if (suitedCards !== null) {
+      const straightCards = this.getStraightCards(suitedCards);
+      if (straightCards !== null) {;
+        if (straightCards[0].rank === CardRank.A) {
+          rankings.push(HandRanking.ROYAL_FLUSH);
+        }
+        rankings.push(HandRanking.STRAIGHT_FLUSH);
+      }
+      rankings.push(HandRanking.FLUSH);
+    }
+
+    cards.sort((c1, c2) => c2.rank - c1.rank);
+    cards = unique(cards, (c1, c2) => c1.rank !== c2.rank);
+    if (cards.length >= 5) {
+      const straightCards = this.getStraightCards(cards);
+      if (straightCards !== null) {
+        rankings.push(HandRanking.STRAIGHT);
+      }
+    }
+
+    return rankings;
   }
 
   ranking(): HandRanking {
