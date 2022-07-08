@@ -38,6 +38,9 @@ var Round = /** @class */ (function () {
     Round.prototype.numActivePlayers = function () {
         return this._numActivePlayers;
     };
+    Round.prototype.numPositivePlayers = function () {
+        return this._positivePlayers.filter(function (player) { return player; }).length;
+    };
     Round.prototype.inProgress = function () {
         return ((this._contested || this._numActivePlayers > 1) &&
             (this._firstAction || this._playerToAct !== this._lastAggressiveActor));

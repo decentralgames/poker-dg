@@ -27,6 +27,7 @@ export default class BettingRound {
     activePlayers(): boolean[];
     positivePlayers(): boolean[];
     numActivePlayers(): number;
+    numPositivePlayers(): number;
     legalActions(): ActionRange;
     actionTaken(action: Action, bet?: Chips): void;
     standUp(seat: number): void;

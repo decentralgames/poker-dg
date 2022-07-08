@@ -81,6 +81,9 @@ var BettingRound = /** @class */ (function () {
     BettingRound.prototype.numActivePlayers = function () {
         return this._round.numActivePlayers();
     };
+    BettingRound.prototype.numPositivePlayers = function () {
+        return this._round.numPositivePlayers();
+    };
     BettingRound.prototype.legalActions = function () {
         var player = this._players[this._round.playerToAct()];
         assert_1.default(player !== null);

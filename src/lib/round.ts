@@ -50,6 +50,10 @@ export default class Round {
     return this._numActivePlayers;
   }
 
+  numPositivePlayers(): number {
+    return this._positivePlayers.filter(player => player).length;
+  }
+
   inProgress(): boolean {
     return (
       (this._contested || this._numActivePlayers > 1) &&

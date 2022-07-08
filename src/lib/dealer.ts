@@ -129,6 +129,10 @@ export default class Dealer {
     return this._bettingRound?.numActivePlayers() ?? 0;
   }
 
+  numPositivePlayers(): number {
+    return this._bettingRound?.numPositivePlayers() ?? 0;
+  }
+
   biggestBet(): Chips {
     return this._bettingRound?.biggestBet() ?? 0;
   }
@@ -254,10 +258,7 @@ export default class Dealer {
     if ((this._bettingRound?.numActivePlayers() ?? 0) <= 1) {
       this._roundOfBetting = RoundOfBetting.RIVER;
       // If there is only one pot, and there is only one player in it...
-      if (
-        this._potManager.pots().length === 1 &&
-        this._potManager.pots()[0].eligiblePlayers().length === 1
-      ) {
+      if (this._potManager.pots().length === 1 && this.numPositivePlayers() === 1) {
         // ...there is no need to deal the undealt community cards.
       } else {
         this.dealCommunityCards();
@@ -307,10 +308,7 @@ export default class Dealer {
     assert(this.bettingRoundsCompleted(), 'Betting rounds must be completed');
 
     this._handInProgress = false;
-    if (
-      this._potManager.pots().length === 1 &&
-      this._potManager.pots()[0].eligiblePlayers().length === 1
-    ) {
+    if (this._potManager.pots().length === 1 && this.numPositivePlayers() === 1) {
       // No need to evaluate the hand. There is only one player.
       const index = this._potManager.pots()[0].eligiblePlayers()[0];
       const player = this._players[index];
@@ -322,8 +320,9 @@ export default class Dealer {
     }
 
     for (const pot of this._potManager.pots()) {
-      const playerResults: [SeatIndex, Hand][] = pot
-        .eligiblePlayers()
+      const playerResults: [SeatIndex, Hand][] = this.positivePlayers()
+        .map((isPositive, seatIndex) => (isPositive ? seatIndex : -1))
+        .filter(seatIndex => seatIndex > -1)
         .map((seatIndex) => {
           return [
             seatIndex,
