@@ -18,7 +18,6 @@ export default class Round {
     playerToAct(): SeatIndex;
     lastAggressiveActor(): SeatIndex;
     numActivePlayers(): number;
-    numPositivePlayers(): number;
     inProgress(): boolean;
     isContested(): boolean;
     actionTaken(action: Action, isRealLeave?: boolean): void;

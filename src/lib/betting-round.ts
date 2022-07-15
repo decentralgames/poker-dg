@@ -88,10 +88,6 @@ export default class BettingRound {
     return this._round.numActivePlayers();
   }
 
-  numPositivePlayers(): number {
-    return this._round.numPositivePlayers();
-  }
-
   legalActions(): ActionRange {
     const player = this._players[this._round.playerToAct()];
     assert(player !== null);

@@ -122,10 +122,6 @@ var Dealer = /** @class */ (function () {
         var _a, _b;
         return (_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.numActivePlayers()) !== null && _b !== void 0 ? _b : 0;
     };
-    Dealer.prototype.numPositivePlayers = function () {
-        var _a, _b;
-        return (_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.numPositivePlayers()) !== null && _b !== void 0 ? _b : 0;
-    };
     Dealer.prototype.biggestBet = function () {
         var _a, _b;
         return (_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.biggestBet()) !== null && _b !== void 0 ? _b : 0;
@@ -226,7 +222,8 @@ var Dealer = /** @class */ (function () {
         if (((_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.numActivePlayers()) !== null && _b !== void 0 ? _b : 0) <= 1) {
             this._roundOfBetting = community_cards_1.RoundOfBetting.RIVER;
             // If there is only one pot, and there is only one player in it...
-            if (this._potManager.pots().length === 1 && this.numPositivePlayers() === 1) {
+            if (this._potManager.pots().length === 1 &&
+                this._potManager.pots()[0].eligiblePlayers().length === 1) {
                 // ...there is no need to deal the undealt community cards.
             }
             else {
@@ -265,7 +262,8 @@ var Dealer = /** @class */ (function () {
         assert_1.default(!this.bettingRoundInProgress(), 'Betting round must not be in progress');
         assert_1.default(this.bettingRoundsCompleted(), 'Betting rounds must be completed');
         this._handInProgress = false;
-        if (this._potManager.pots().length === 1 && this.numPositivePlayers() === 1) {
+        if (this._potManager.pots().length === 1 &&
+            this._potManager.pots()[0].eligiblePlayers().length === 1) {
             // No need to evaluate the hand. There is only one player.
             var index = this._potManager.pots()[0].eligiblePlayers()[0];
             var player = this._players[index];
@@ -275,9 +273,8 @@ var Dealer = /** @class */ (function () {
             // TODO: Also, no reveals in this case. Reveals are only necessary when there is >=2 players.
         }
         var _loop_1 = function (pot) {
-            var playerResults = this_1.positivePlayers()
-                .map(function (isPositive, seatIndex) { return (isPositive ? seatIndex : -1); })
-                .filter(function (seatIndex) { return seatIndex > -1; })
+            var playerResults = pot
+                .eligiblePlayers()
                 .map(function (seatIndex) {
                 return [
                     seatIndex,
