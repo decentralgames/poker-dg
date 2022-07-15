@@ -137,8 +137,8 @@ export default class Poker {
     return this._table.handPlayers().map(seatArrayMapper);
   }
 
-  positivePlayers(): boolean[] {
-    return this._table.positivePlayers();
+  nonFoldedPlayers(): boolean[] {
+    return this._table.nonFoldedPlayers();
   }
 
   numActivePlayers(): number {

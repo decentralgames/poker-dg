@@ -78,11 +78,11 @@ export default class Table {
     return this._dealer.players();
   }
 
-  positivePlayers(): boolean[] {
+  nonFoldedPlayers(): boolean[] {
     assert(this.handInProgress(), 'Hand must be in progress');
     assert(this._dealer !== undefined);
 
-    return this._dealer.positivePlayers();
+    return this._dealer.nonFoldedPlayers();
   }
 
   numActivePlayers(): number {

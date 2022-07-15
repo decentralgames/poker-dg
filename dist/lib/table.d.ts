@@ -35,7 +35,7 @@ export default class Table {
     blinds(): Blinds;
     seats(): SeatArray;
     handPlayers(): SeatArray;
-    positivePlayers(): boolean[];
+    nonFoldedPlayers(): boolean[];
     numActivePlayers(): number;
     pots(): Pot[];
     forcedBets(): ForcedBets;

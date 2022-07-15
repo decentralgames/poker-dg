@@ -28,7 +28,7 @@ export default class Poker {
         stack: number;
         betSize: number;
     } | null)[];
-    positivePlayers(): boolean[];
+    nonFoldedPlayers(): boolean[];
     numActivePlayers(): number;
     pots(): {
         size: number;

@@ -74,10 +74,10 @@ var Table = /** @class */ (function () {
         assert_1.default(this._dealer !== undefined);
         return this._dealer.players();
     };
-    Table.prototype.positivePlayers = function () {
+    Table.prototype.nonFoldedPlayers = function () {
         assert_1.default(this.handInProgress(), 'Hand must be in progress');
         assert_1.default(this._dealer !== undefined);
-        return this._dealer.positivePlayers();
+        return this._dealer.nonFoldedPlayers();
     };
     Table.prototype.numActivePlayers = function () {
         assert_1.default(this.handInProgress(), 'Hand must be in progress');

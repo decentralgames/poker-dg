@@ -29,14 +29,14 @@ export default class BettingRound {
 
   constructor(
     players: SeatArray,
-    positivePlayers: boolean[],
+    nonFoldedPlayers: boolean[],
     firstToAct: SeatIndex,
     minRaise: Chips,
     biggestBet: Chips = 0
   ) {
     this._round = new Round(
       players.map((player) => !!player),
-      positivePlayers,
+      nonFoldedPlayers,
       firstToAct
     );
     this._players = players;
@@ -80,8 +80,8 @@ export default class BettingRound {
     return this._round.activePlayers();
   }
 
-  positivePlayers(): boolean[] {
-    return this._round.positivePlayers();
+  nonFoldedPlayers(): boolean[] {
+    return this._round.nonFoldedPlayers();
   }
 
   numActivePlayers(): number {

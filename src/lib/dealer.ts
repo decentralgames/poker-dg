@@ -121,8 +121,8 @@ export default class Dealer {
     return this._roundOfBetting;
   }
 
-  positivePlayers(): boolean[] {
-    return this._bettingRound?.positivePlayers() ?? [];
+  nonFoldedPlayers(): boolean[] {
+    return this._bettingRound?.nonFoldedPlayers() ?? [];
   }
 
   numActivePlayers(): number {
@@ -268,10 +268,10 @@ export default class Dealer {
       // Start the next betting round.
       this._roundOfBetting = next(this._roundOfBetting);
       this._players = this._bettingRound?.players() ?? [];
-      const positivePlayers = this._bettingRound?.positivePlayers() ?? [];
+      const nonFoldedPlayers = this._bettingRound?.nonFoldedPlayers() ?? [];
       this._bettingRound = new BettingRound(
         [...this._players],
-        positivePlayers,
+        nonFoldedPlayers,
         this.nextOrWrap(this._button),
         this._forcedBets.blinds.big
       );

@@ -42,9 +42,9 @@ var ActionRange = /** @class */ (function () {
 }());
 exports.ActionRange = ActionRange;
 var BettingRound = /** @class */ (function () {
-    function BettingRound(players, positivePlayers, firstToAct, minRaise, biggestBet) {
+    function BettingRound(players, nonFoldedPlayers, firstToAct, minRaise, biggestBet) {
         if (biggestBet === void 0) { biggestBet = 0; }
-        this._round = new round_1.default(players.map(function (player) { return !!player; }), positivePlayers, firstToAct);
+        this._round = new round_1.default(players.map(function (player) { return !!player; }), nonFoldedPlayers, firstToAct);
         this._players = players;
         this._biggestBet = biggestBet;
         this._minRaise = minRaise;
@@ -75,8 +75,8 @@ var BettingRound = /** @class */ (function () {
     BettingRound.prototype.activePlayers = function () {
         return this._round.activePlayers();
     };
-    BettingRound.prototype.positivePlayers = function () {
-        return this._round.positivePlayers();
+    BettingRound.prototype.nonFoldedPlayers = function () {
+        return this._round.nonFoldedPlayers();
     };
     BettingRound.prototype.numActivePlayers = function () {
         return this._round.numActivePlayers();
@@ -85,7 +85,7 @@ var BettingRound = /** @class */ (function () {
         var player = this._players[this._round.playerToAct()];
         assert_1.default(player !== null);
         var playerChips = player.totalChips();
-        var canRaise = playerChips > this._biggestBet;
+        var canRaise = playerChips >= this._biggestBet;
         if (canRaise) {
             var minBet = this._biggestBet + this._minRaise;
             var raiseRange = new chip_range_1.default(Math.min(minBet, playerChips), playerChips);
