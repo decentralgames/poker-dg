@@ -175,6 +175,14 @@ export default class Hand {
     }
   }
 
+  // return cards sorted by rank, order of keepFirstN cards is not changed
+  static sortRemainingCards(cards: Card[], keepFirstN: number): Card[] {
+    return [
+      ...cards.slice(0, keepFirstN),
+      ...cards.slice(keepFirstN + 1).sort((c1, c2) => c2.rank - c1.rank),
+    ];
+  }
+
   static _highLowHandEval(cards: Card[], isRiverCheck: boolean = true): Hand {
     if (isRiverCheck) {
       assert(cards.length === 7);
@@ -199,26 +207,28 @@ export default class Hand {
     let ranking: HandRanking;
     const { count } = Hand.nextRank(cards);
     if (count === 4) {
-      cards = [
-        ...cards.slice(0, 4),
-        ...cards.slice(5).sort((c1, c2) => c2.rank - c1.rank),
-      ];
+      cards = Hand.sortRemainingCards(cards, 4);
       ranking = HandRanking.FOUR_OF_A_KIND;
     } else if (count === 3) {
       const tmp = Hand.nextRank(cards.slice(count - cards.length));
       if (tmp.count >= 2) {
+        cards = Hand.sortRemainingCards(cards, 5);
         ranking = HandRanking.FULL_HOUSE;
       } else {
+        cards = Hand.sortRemainingCards(cards, 3);
         ranking = HandRanking.THREE_OF_A_KIND;
       }
     } else if (count === 2) {
       const tmp = Hand.nextRank(cards.slice(count - cards.length));
       if (tmp.count === 2) {
+        cards = Hand.sortRemainingCards(cards, 4);
         ranking = HandRanking.TWO_PAIR;
       } else {
+        cards = Hand.sortRemainingCards(cards, 2);
         ranking = HandRanking.PAIR;
       }
     } else {
+      cards = Hand.sortRemainingCards(cards, 1);
       ranking = HandRanking.HIGH_CARD;
     }
 
@@ -314,7 +324,7 @@ export default class Hand {
     if (count >= 3 && tmp.count >= 3) {
       rankings.push(HandRanking.FULL_HOUSE);
     }
-    if ((count === 4) || (count >= 2 && tmp.count >= 2)) {
+    if (count === 4 || (count >= 2 && tmp.count >= 2)) {
       rankings.push(HandRanking.TWO_PAIR);
     }
     if (count >= 2) {
@@ -341,7 +351,7 @@ export default class Hand {
 
     if (suitedCards !== null) {
       const straightCards = this.getStraightCards(suitedCards);
-      if (straightCards !== null) {;
+      if (straightCards !== null) {
         if (straightCards[0].rank === CardRank.A) {
           rankings.push(HandRanking.ROYAL_FLUSH);
         }

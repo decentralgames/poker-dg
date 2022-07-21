@@ -84,7 +84,7 @@ describe('Hand', () => {
       handRankings = [
         HandRanking.FOUR_OF_A_KIND,
         HandRanking.FULL_HOUSE,
-        HandRanking.THREE_OF_A_KIND,
+        HandRanking.FULL_HOUSE,
         HandRanking.TWO_PAIR,
         HandRanking.PAIR,
         HandRanking.HIGH_CARD,
@@ -176,6 +176,28 @@ describe('Hand', () => {
       for (let index = 0; index < allCards.length; index++) {
         expect(Hand.of(allCards[index]).cards()).toEqual(handCards[index]);
       }
+    });
+  });
+
+  describe('compare hands', () => {
+    let allHands: Array<Hand>;
+
+    beforeEach(() => {
+      allHands = [
+        Hand.of(makeCards('Ad 1d 3s 5d 7s 8s 9d')),
+        Hand.of(makeCards('Jd 5d Js Ad As 5s Qd')),
+        Hand.of(makeCards('Jd 5d Js Ad As 3s 6h')),
+        Hand.of(makeCards('9h 6h Js 9c 6s Kh Kd')),
+        Hand.of(makeCards('9h 6h Js 9c 6s 3c Jh')),
+      ];
+    });
+
+    // negative comparison means the first hand is stronger
+    // positive comparison means the second hand is stronger
+    test('hand rankings', () => {
+      expect(Hand.compare(allHands[0], allHands[1])).toBeGreaterThan(0);
+      expect(Hand.compare(allHands[1], allHands[2])).toBeLessThan(0);
+      expect(Hand.compare(allHands[3], allHands[4])).toBeLessThan(0);
     });
   });
 });
