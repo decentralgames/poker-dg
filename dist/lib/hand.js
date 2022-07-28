@@ -173,6 +173,10 @@ var Hand = /** @class */ (function () {
             first = last;
         }
     };
+    // return cards sorted by rank, order of keepFirstN cards is not changed
+    Hand.sortRemainingCards = function (cards, keepFirstN) {
+        return __spreadArray(__spreadArray([], cards.slice(0, keepFirstN)), cards.slice(keepFirstN + 1).sort(function (c1, c2) { return c2.rank - c1.rank; }));
+    };
     Hand._highLowHandEval = function (cards, isRiverCheck) {
         if (isRiverCheck === void 0) { isRiverCheck = true; }
         if (isRiverCheck) {
@@ -196,28 +200,33 @@ var Hand = /** @class */ (function () {
         var ranking;
         var count = Hand.nextRank(cards).count;
         if (count === 4) {
-            cards = __spreadArray(__spreadArray([], cards.slice(0, 4)), cards.slice(5).sort(function (c1, c2) { return c2.rank - c1.rank; }));
+            cards = Hand.sortRemainingCards(cards, 4);
             ranking = HandRanking.FOUR_OF_A_KIND;
         }
         else if (count === 3) {
             var tmp = Hand.nextRank(cards.slice(count - cards.length));
             if (tmp.count >= 2) {
+                cards = Hand.sortRemainingCards(cards, 5);
                 ranking = HandRanking.FULL_HOUSE;
             }
             else {
+                cards = Hand.sortRemainingCards(cards, 3);
                 ranking = HandRanking.THREE_OF_A_KIND;
             }
         }
         else if (count === 2) {
             var tmp = Hand.nextRank(cards.slice(count - cards.length));
             if (tmp.count === 2) {
+                cards = Hand.sortRemainingCards(cards, 4);
                 ranking = HandRanking.TWO_PAIR;
             }
             else {
+                cards = Hand.sortRemainingCards(cards, 2);
                 ranking = HandRanking.PAIR;
             }
         }
         else {
+            cards = Hand.sortRemainingCards(cards, 1);
             ranking = HandRanking.HIGH_CARD;
         }
         var handCards = cards.slice(0, 5);
@@ -306,7 +315,7 @@ var Hand = /** @class */ (function () {
         if (count >= 3 && tmp.count >= 3) {
             rankings.push(HandRanking.FULL_HOUSE);
         }
-        if ((count === 4) || (count >= 2 && tmp.count >= 2)) {
+        if (count === 4 || (count >= 2 && tmp.count >= 2)) {
             rankings.push(HandRanking.TWO_PAIR);
         }
         if (count >= 2) {
@@ -329,7 +338,6 @@ var Hand = /** @class */ (function () {
         if (suitedCards !== null) {
             var straightCards = this.getStraightCards(suitedCards);
             if (straightCards !== null) {
-                ;
                 if (straightCards[0].rank === card_1.CardRank.A) {
                     rankings.push(HandRanking.ROYAL_FLUSH);
                 }

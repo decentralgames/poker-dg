@@ -314,21 +314,22 @@ var Table = /** @class */ (function () {
             var automaticAction = this._automaticActions[s];
             if (automaticAction !== null) {
                 var player = this._handPlayers[s];
-                assert_1.default(player !== null);
-                var isContested = this._dealer.isContested();
-                var betGap = biggestBet - player.betSize();
-                var totalChips = player.totalChips();
-                if (automaticAction & AutomaticAction.CHECK_FOLD && betGap > 0) {
-                    this._automaticActions[s] = AutomaticAction.FOLD;
-                }
-                else if (automaticAction & AutomaticAction.CHECK && betGap > 0) {
-                    this._automaticActions[s] = null;
-                } /* else if (automaticAction & AutomaticAction.CALL && isContested) {
-                            this._automaticActions[s] = null
-                        }*/
-                else if (automaticAction & AutomaticAction.CALL_ANY &&
-                    biggestBet >= totalChips) {
-                    this._automaticActions[s] = AutomaticAction.CALL;
+                if (player) {
+                    var isContested = this._dealer.isContested();
+                    var betGap = biggestBet - player.betSize();
+                    var totalChips = player.totalChips();
+                    if (automaticAction & AutomaticAction.CHECK_FOLD && betGap > 0) {
+                        this._automaticActions[s] = AutomaticAction.FOLD;
+                    }
+                    else if (automaticAction & AutomaticAction.CHECK && betGap > 0) {
+                        this._automaticActions[s] = null;
+                    } /* else if (automaticAction & AutomaticAction.CALL && isContested) {
+                                this._automaticActions[s] = null
+                            }*/
+                    else if (automaticAction & AutomaticAction.CALL_ANY &&
+                        biggestBet >= totalChips) {
+                        this._automaticActions[s] = AutomaticAction.CALL;
+                    }
                 }
             }
         }

@@ -31,6 +31,7 @@ export default class Hand {
     static getStrength(cards: Card[]): number;
     static getSuitedCards(cards: Card[], isRiverCheck?: boolean): Card[] | null;
     static getStraightCards(cards: Card[]): Card[] | null;
+    static sortRemainingCards(cards: Card[], keepFirstN: number): Card[];
     static _highLowHandEval(cards: Card[], isRiverCheck?: boolean): Hand;
     static _straightFlushEval(cards: Card[], isRiverCheck?: boolean): Hand | null;
     static _highLowHandList(cards: Card[], isRiverCheck?: boolean): HandRanking[];
