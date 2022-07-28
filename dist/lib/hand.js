@@ -175,7 +175,7 @@ var Hand = /** @class */ (function () {
     };
     // return cards sorted by rank, order of keepFirstN cards is not changed
     Hand.sortRemainingCards = function (cards, keepFirstN) {
-        return __spreadArray(__spreadArray([], cards.slice(0, keepFirstN)), cards.slice(keepFirstN + 1).sort(function (c1, c2) { return c2.rank - c1.rank; }));
+        return __spreadArray(__spreadArray([], cards.slice(0, keepFirstN)), cards.slice(keepFirstN).sort(function (c1, c2) { return c2.rank - c1.rank; }));
     };
     Hand._highLowHandEval = function (cards, isRiverCheck) {
         if (isRiverCheck === void 0) { isRiverCheck = true; }

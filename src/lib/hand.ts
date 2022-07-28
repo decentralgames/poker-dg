@@ -179,7 +179,7 @@ export default class Hand {
   static sortRemainingCards(cards: Card[], keepFirstN: number): Card[] {
     return [
       ...cards.slice(0, keepFirstN),
-      ...cards.slice(keepFirstN + 1).sort((c1, c2) => c2.rank - c1.rank),
+      ...cards.slice(keepFirstN).sort((c1, c2) => c2.rank - c1.rank),
     ];
   }
 
