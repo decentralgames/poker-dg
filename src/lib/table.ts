@@ -410,21 +410,22 @@ export default class Table {
       const automaticAction = this._automaticActions[s];
       if (automaticAction !== null) {
         const player = this._handPlayers[s];
-        assert(player !== null);
-        const isContested = this._dealer.isContested();
-        const betGap = biggestBet - player.betSize();
-        const totalChips = player.totalChips();
-        if (automaticAction & AutomaticAction.CHECK_FOLD && betGap > 0) {
-          this._automaticActions[s] = AutomaticAction.FOLD;
-        } else if (automaticAction & AutomaticAction.CHECK && betGap > 0) {
-          this._automaticActions[s] = null;
-        } /* else if (automaticAction & AutomaticAction.CALL && isContested) {
-                    this._automaticActions[s] = null
-                }*/ else if (
-          automaticAction & AutomaticAction.CALL_ANY &&
-          biggestBet >= totalChips
-        ) {
-          this._automaticActions[s] = AutomaticAction.CALL;
+        if (player) {
+          const isContested = this._dealer.isContested();
+          const betGap = biggestBet - player.betSize();
+          const totalChips = player.totalChips();
+          if (automaticAction & AutomaticAction.CHECK_FOLD && betGap > 0) {
+            this._automaticActions[s] = AutomaticAction.FOLD;
+          } else if (automaticAction & AutomaticAction.CHECK && betGap > 0) {
+            this._automaticActions[s] = null;
+          } /* else if (automaticAction & AutomaticAction.CALL && isContested) {
+                      this._automaticActions[s] = null
+                  }*/ else if (
+            automaticAction & AutomaticAction.CALL_ANY &&
+            biggestBet >= totalChips
+          ) {
+            this._automaticActions[s] = AutomaticAction.CALL;
+          }
         }
       }
     }
