@@ -15,9 +15,14 @@ var PotManager = /** @class */ (function () {
     PotManager.prototype.betFolded = function (amount) {
         this._aggregateFoldedBets += amount;
     };
-    PotManager.prototype.collectBetsForm = function (players) {
+    PotManager.prototype.collectBetsFrom = function (players) {
         // TODO: Return a list of transactions.
         for (;;) {
+            var isPlayerAllIn = players.some(function (player) {
+                return player !== null &&
+                    player.totalChips() === player.betSize() &&
+                    player.totalChips() !== 0;
+            });
             var minBet = this._pots[this._pots.length - 1].collectBetsFrom(players);
             // Calculate the right amount of folded bets to add to the pot.
             // Logic: If 'x' is chips which a player committed to the pot and 'n' is number of (eligible) players in that pot,
@@ -27,7 +32,8 @@ var PotManager = /** @class */ (function () {
             this._pots[this._pots.length - 1].add(aggregateFoldedBetsConsumedAmount);
             this._aggregateFoldedBets -= aggregateFoldedBetsConsumedAmount;
             if (players.filter(function (player) { return player !== null && player.betSize() !== 0; })
-                .length) {
+                .length ||
+                isPlayerAllIn) {
                 this._pots.push(new pot_1.default());
                 continue;
             }

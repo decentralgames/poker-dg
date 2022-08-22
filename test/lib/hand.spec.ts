@@ -189,6 +189,8 @@ describe('Hand', () => {
         Hand.of(makeCards('Jd 5d Js Ad As 3s 6h')),
         Hand.of(makeCards('9h 6h Js 9c 6s Kh Kd')),
         Hand.of(makeCards('9h 6h Js 9c 6s 3c Jh')),
+        Hand.of(makeCards('6c 2d 7h 5s 3c 6s As')),
+        Hand.of(makeCards('6c 2d 7h 5s 3c 5d 3d')),
       ];
     });
 
@@ -198,6 +200,7 @@ describe('Hand', () => {
       expect(Hand.compare(allHands[0], allHands[1])).toBeGreaterThan(0);
       expect(Hand.compare(allHands[1], allHands[2])).toBeLessThan(0);
       expect(Hand.compare(allHands[3], allHands[4])).toBeLessThan(0);
+      expect(Hand.compare(allHands[5], allHands[6])).toBeGreaterThan(0);
     });
   });
 });

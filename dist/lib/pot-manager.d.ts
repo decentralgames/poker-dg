@@ -6,5 +6,5 @@ export default class PotManager {
     constructor();
     pots(): Pot[];
     betFolded(amount: any): void;
-    collectBetsForm(players: SeatArray): void;
+    collectBetsFrom(players: SeatArray): void;
 }

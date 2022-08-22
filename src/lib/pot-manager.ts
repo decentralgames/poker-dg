@@ -18,9 +18,16 @@ export default class PotManager {
     this._aggregateFoldedBets += amount;
   }
 
-  collectBetsForm(players: SeatArray): void {
+  collectBetsFrom(players: SeatArray): void {
     // TODO: Return a list of transactions.
     for (;;) {
+      const isPlayerAllIn = players.some(
+        (player) =>
+          player !== null &&
+          player.totalChips() === player.betSize() &&
+          player.totalChips() !== 0
+      );
+
       const minBet = this._pots[this._pots.length - 1].collectBetsFrom(players);
 
       // Calculate the right amount of folded bets to add to the pot.
@@ -37,7 +44,8 @@ export default class PotManager {
 
       if (
         players.filter((player) => player !== null && player.betSize() !== 0)
-          .length
+          .length ||
+        isPlayerAllIn
       ) {
         this._pots.push(new Pot());
         continue;

@@ -218,7 +218,7 @@ var Dealer = /** @class */ (function () {
         var _a, _b, _c, _d, _e, _f;
         assert_1.default(!this._bettingRoundsCompleted, 'Betting rounds must not be completed');
         assert_1.default(!this.bettingRoundInProgress(), 'Betting round must not be in progress');
-        this._potManager.collectBetsForm(this._players);
+        this._potManager.collectBetsFrom(this._players);
         if (((_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.numActivePlayers()) !== null && _b !== void 0 ? _b : 0) <= 1) {
             this._roundOfBetting = community_cards_1.RoundOfBetting.RIVER;
             // If there is only one pot, and there is only one player in it...

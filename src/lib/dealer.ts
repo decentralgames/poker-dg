@@ -250,7 +250,7 @@ export default class Dealer {
       'Betting round must not be in progress'
     );
 
-    this._potManager.collectBetsForm(this._players);
+    this._potManager.collectBetsFrom(this._players);
     if ((this._bettingRound?.numActivePlayers() ?? 0) <= 1) {
       this._roundOfBetting = RoundOfBetting.RIVER;
       // If there is only one pot, and there is only one player in it...
