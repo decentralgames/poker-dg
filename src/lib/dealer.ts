@@ -255,7 +255,8 @@ export default class Dealer {
       this._roundOfBetting = RoundOfBetting.RIVER;
       // If there is only one pot, and there is only one player in it...
       if (
-        this._potManager.pots().length === 1 &&
+        (this._potManager.pots().length <= 1 ||
+          this._potManager.pots()[1].size() === 0) &&
         this._potManager.pots()[0].eligiblePlayers().length === 1
       ) {
         // ...there is no need to deal the undealt community cards.
@@ -308,7 +309,8 @@ export default class Dealer {
 
     this._handInProgress = false;
     if (
-      this._potManager.pots().length === 1 &&
+      (this._potManager.pots().length <= 1 ||
+        this._potManager.pots()[1].size() === 0) &&
       this._potManager.pots()[0].eligiblePlayers().length === 1
     ) {
       // No need to evaluate the hand. There is only one player.
