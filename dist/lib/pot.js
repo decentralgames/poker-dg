@@ -15,6 +15,9 @@ var Pot = /** @class */ (function () {
     Pot.prototype.eligiblePlayers = function () {
         return this._eligiblePlayers;
     };
+    Pot.prototype.removePlayer = function (player) {
+        this._eligiblePlayers = this._eligiblePlayers.filter(function (index) { return index != player; });
+    };
     Pot.prototype.add = function (amount) {
         assert_1.default(amount >= 0, 'Cannot add a negative amount to the pot');
         this._size += amount;

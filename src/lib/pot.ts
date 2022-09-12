@@ -16,6 +16,12 @@ export default class Pot {
     return this._eligiblePlayers;
   }
 
+  removePlayer(player: SeatIndex): void {
+    this._eligiblePlayers = this._eligiblePlayers.filter(
+      (index: SeatIndex) => index != player
+    );
+  }
+
   add(amount: Chips): void {
     assert(amount >= 0, 'Cannot add a negative amount to the pot');
     this._size += amount;

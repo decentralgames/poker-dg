@@ -18,6 +18,10 @@ export default class PotManager {
     this._aggregateFoldedBets += amount;
   }
 
+  removePlayerFromPots(player: number): void {
+    this._pots.forEach((pot: Pot) => pot.removePlayer(player));
+  }
+
   collectBetsFrom(players: SeatArray): void {
     // TODO: Return a list of transactions.
     for (;;) {

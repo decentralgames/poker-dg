@@ -15,6 +15,9 @@ var PotManager = /** @class */ (function () {
     PotManager.prototype.betFolded = function (amount) {
         this._aggregateFoldedBets += amount;
     };
+    PotManager.prototype.removePlayerFromPots = function (player) {
+        this._pots.forEach(function (pot) { return pot.removePlayer(player); });
+    };
     PotManager.prototype.collectBetsFrom = function (players) {
         // TODO: Return a list of transactions.
         for (;;) {

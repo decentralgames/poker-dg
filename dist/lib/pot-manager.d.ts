@@ -6,5 +6,6 @@ export default class PotManager {
     constructor();
     pots(): Pot[];
     betFolded(amount: any): void;
+    removePlayerFromPots(player: number): void;
     collectBetsFrom(players: SeatArray): void;
 }

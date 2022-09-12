@@ -236,6 +236,7 @@ export default class Dealer {
       this._potManager.betFolded(foldingPlayer.betSize());
       foldingPlayer.takeFromBet(foldingPlayer.betSize());
       this._players[this.playerToAct()] = null;
+      this._potManager.removePlayerFromPots(this.playerToAct());
       this._bettingRound.actionTaken(BettingRoundAction.LEAVE);
     }
   }
