@@ -254,6 +254,10 @@ var Dealer = /** @class */ (function () {
         this._players[seat] = null;
         (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.standUp(seat);
     };
+    Dealer.prototype.isRaiseValid = function (bet) {
+        var _a, _b;
+        return (_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.isRaiseValid(bet)) !== null && _b !== void 0 ? _b : false;
+    };
     Dealer.prototype.winners = function () {
         assert_1.default(!this.handInProgress(), 'Hand must not be in progress');
         return this._winners;

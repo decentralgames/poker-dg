@@ -291,6 +291,10 @@ export default class Dealer {
     this._bettingRound?.standUp(seat);
   }
 
+  isRaiseValid(bet: Chips): boolean {
+    return this._bettingRound?.isRaiseValid(bet) ?? false;
+  }
+
   winners(): [SeatIndex, Hand, HoleCards][][] {
     assert(!this.handInProgress(), 'Hand must not be in progress');
 

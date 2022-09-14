@@ -59,6 +59,7 @@ export default class Table {
     setAutomaticAction(seat: SeatIndex, action: AutomaticAction | null): void;
     sitDown(seat: SeatIndex, buyIn: Chips): void;
     standUp(seat: SeatIndex): void;
+    isRaiseValid(bet: Chips): boolean;
     private takeAutomaticAction;
     private amendAutomaticActions;
     private actPassively;

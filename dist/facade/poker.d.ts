@@ -2,6 +2,7 @@ import ChipRange from '../lib/chip-range';
 import { SeatIndex } from 'types/seat-index';
 import { HandRanking } from '../lib/hand';
 import { Blinds } from 'types/blinds';
+import { Chips } from 'types/chips';
 declare type Card = {
     rank: '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'T' | 'J' | 'Q' | 'K' | 'A';
     suit: 'clubs' | 'diamonds' | 'hearts' | 'spades';
@@ -76,5 +77,6 @@ export default class Poker {
     topUpChips(seatIndex: number, topUp: number): void;
     sitDown(seatIndex: number, buyIn: number): void;
     standUp(seatIndex: number): void;
+    isRaiseValid(bet: Chips): boolean;
 }
 export {};

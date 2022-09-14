@@ -60,6 +60,7 @@ export default class Dealer {
     actionTaken(action: Action, bet?: Chips): void;
     endBettingRound(): void;
     standUp(seat: number): void;
+    isRaiseValid(bet: Chips): boolean;
     winners(): [SeatIndex, Hand, HoleCards][][];
     showdown(): SeatArray;
     private nextOrWrap;

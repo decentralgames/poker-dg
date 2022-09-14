@@ -362,6 +362,10 @@ export default class Table {
     }
   }
 
+  isRaiseValid(bet: Chips): boolean {
+    return this._dealer?.isRaiseValid(bet) ?? false;
+  }
+
   private takeAutomaticAction(automaticAction: AutomaticAction): void {
     assert(this._dealer !== undefined);
     assert(this._handPlayers !== undefined);

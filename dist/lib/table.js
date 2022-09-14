@@ -272,6 +272,10 @@ var Table = /** @class */ (function () {
             this._tablePlayers[seat] = null;
         }
     };
+    Table.prototype.isRaiseValid = function (bet) {
+        var _a, _b;
+        return (_b = (_a = this._dealer) === null || _a === void 0 ? void 0 : _a.isRaiseValid(bet)) !== null && _b !== void 0 ? _b : false;
+    };
     Table.prototype.takeAutomaticAction = function (automaticAction) {
         assert_1.default(this._dealer !== undefined);
         assert_1.default(this._handPlayers !== undefined);

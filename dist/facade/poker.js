@@ -226,6 +226,9 @@ var Poker = /** @class */ (function () {
     Poker.prototype.standUp = function (seatIndex) {
         this._table.standUp(seatIndex);
     };
+    Poker.prototype.isRaiseValid = function (bet) {
+        return this._table.isRaiseValid(bet);
+    };
     return Poker;
 }());
 exports.default = Poker;

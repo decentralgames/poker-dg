@@ -136,7 +136,7 @@ export default class BettingRound {
     this._round.standUp(seat);
   }
 
-  private isRaiseValid(bet: Chips): boolean {
+  isRaiseValid(bet: Chips): boolean {
     const player = this._players[this._round.playerToAct()];
     assert(player !== null);
     const playerChips = player.stack() + player.betSize();

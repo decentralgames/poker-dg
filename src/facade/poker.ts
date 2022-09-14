@@ -7,6 +7,7 @@ import ChipRange from '../lib/chip-range';
 import { SeatIndex } from 'types/seat-index';
 import { HandRanking } from '../lib/hand';
 import { Blinds } from 'types/blinds';
+import { Chips } from 'types/chips';
 
 type Card = {
   rank:
@@ -291,5 +292,9 @@ export default class Poker {
 
   standUp(seatIndex: number): void {
     this._table.standUp(seatIndex);
+  }
+
+  isRaiseValid(bet: Chips): boolean {
+    return this._table.isRaiseValid(bet);
   }
 }

@@ -30,5 +30,5 @@ export default class BettingRound {
     legalActions(): ActionRange;
     actionTaken(action: Action, bet?: Chips): void;
     standUp(seat: number): void;
-    private isRaiseValid;
+    isRaiseValid(bet: Chips): boolean;
 }
