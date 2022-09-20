@@ -92,6 +92,7 @@ export default class BettingRound {
     const player = this._players[this._round.playerToAct()];
     assert(player !== null);
     const playerChips = player.totalChips();
+    
     const canRaise = playerChips >= this._biggestBet;
     if (canRaise) {
       const minBet = this._biggestBet + this._minRaise;
