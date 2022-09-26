@@ -138,16 +138,18 @@ var Dealer = /** @class */ (function () {
         assert_1.default(this.bettingRoundInProgress(), 'Betting round must be in progress');
         assert_1.default(this._bettingRound !== null);
         var player = this._players[this._bettingRound.playerToAct()];
+        assert_1.default(player !== null);
         var actions = this._bettingRound.legalActions();
         var actionRange = new ActionRange(actions.chipRange);
+        var biggestBet = this._bettingRound.biggestBet();
+        var playerBetSize = player.betSize();
         // Below we take care of differentiating between check/call and bet/raise,
         // which the betting_round treats as just "match" and "raise".
-        assert_1.default(player !== null);
-        if (this._bettingRound.biggestBet() - player.betSize() === 0) {
+        if (biggestBet - playerBetSize === 0) {
             actionRange.action |= Action.CHECK;
             assert_1.default(actions.canRaise); // If you can check, you can always bet or raise.
             // If this guy can check, with his existing bet_size, he is the big blind.
-            if (player.betSize() > 0) {
+            if (playerBetSize > 0) {
                 actionRange.action |= Action.RAISE;
             }
             else {
@@ -157,9 +159,13 @@ var Dealer = /** @class */ (function () {
         else {
             actionRange.action |= Action.CALL;
             // If you can call, you may or may not be able to raise.
-            if (actions.canRaise) {
+            var roundBigBlind = this._forcedBets.blinds.big;
+            var hasNotBetOrPostedBlinds = playerBetSize < roundBigBlind;
+            var validRaiseOnTable = playerBetSize * 2 <= biggestBet; // Players cannot re-raise if they haven't been raised by at least the minimum amount
+            if (actions.canRaise && (hasNotBetOrPostedBlinds || validRaiseOnTable)) {
                 actionRange.action |= Action.RAISE;
             }
+            ;
         }
         return actionRange;
     };
