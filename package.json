@@ -1,6 +1,6 @@
 {
   "name": "@decentral.games/poker-dg",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "description": "Texas Hold 'Em Poker table model with convenience features for running real games.",
   "main": "dist/index.js",
   "files": [
