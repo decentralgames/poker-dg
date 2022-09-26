@@ -1,11 +1,7 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -52,8 +48,8 @@ var BettingRound = /** @class */ (function () {
         this._players = players;
         this._biggestBet = biggestBet;
         this._minRaise = minRaise;
-        (0, assert_1.default)(firstToAct < players.length, 'Seat index must be in the valid range');
-        (0, assert_1.default)(players[firstToAct], 'First player to act must exist');
+        assert_1.default(firstToAct < players.length, 'Seat index must be in the valid range');
+        assert_1.default(players[firstToAct], 'First player to act must exist');
     }
     BettingRound.prototype.inProgress = function () {
         return this._round.inProgress();
@@ -87,7 +83,7 @@ var BettingRound = /** @class */ (function () {
     };
     BettingRound.prototype.legalActions = function () {
         var player = this._players[this._round.playerToAct()];
-        (0, assert_1.default)(player !== null);
+        assert_1.default(player !== null);
         var playerChips = player.totalChips();
         var canRaise = playerChips >= this._biggestBet;
         if (canRaise) {
@@ -102,9 +98,9 @@ var BettingRound = /** @class */ (function () {
     BettingRound.prototype.actionTaken = function (action, bet) {
         if (bet === void 0) { bet = 0; }
         var player = this._players[this._round.playerToAct()];
-        (0, assert_1.default)(player !== null);
+        assert_1.default(player !== null);
         if (action === Action.RAISE) {
-            (0, assert_1.default)(this.isRaiseValid(bet));
+            assert_1.default(this.isRaiseValid(bet));
             player.bet(bet);
             this._minRaise = bet - this._biggestBet;
             this._biggestBet = bet;
@@ -123,7 +119,7 @@ var BettingRound = /** @class */ (function () {
             this._round.actionTaken(actionFlag);
         }
         else {
-            (0, assert_1.default)(action === Action.LEAVE);
+            assert_1.default(action === Action.LEAVE);
             this._round.actionTaken(round_1.Action.LEAVE, true);
         }
     };
@@ -133,7 +129,7 @@ var BettingRound = /** @class */ (function () {
     };
     BettingRound.prototype.isRaiseValid = function (bet) {
         var player = this._players[this._round.playerToAct()];
-        (0, assert_1.default)(player !== null);
+        assert_1.default(player !== null);
         var playerChips = player.stack() + player.betSize();
         var minBet = this._biggestBet + this._minRaise;
         if (playerChips > this._biggestBet && playerChips < minBet) {

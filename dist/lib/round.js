@@ -21,7 +21,7 @@ var Round = /** @class */ (function () {
         this._playerToAct = firstToAct;
         this._lastAggressiveActor = firstToAct;
         this._numActivePlayers = activePlayers.filter(function (player) { return !!player; }).length;
-        (0, assert_1.default)(firstToAct < activePlayers.length);
+        assert_1.default(firstToAct < activePlayers.length);
     }
     Round.prototype.activePlayers = function () {
         return this._activePlayers;
@@ -47,8 +47,8 @@ var Round = /** @class */ (function () {
     };
     Round.prototype.actionTaken = function (action, isManualLeave) {
         if (isManualLeave === void 0) { isManualLeave = false; }
-        (0, assert_1.default)(this.inProgress());
-        (0, assert_1.default)(!(action & Action.PASSIVE && action & Action.AGGRESSIVE));
+        assert_1.default(this.inProgress());
+        assert_1.default(!(action & Action.PASSIVE && action & Action.AGGRESSIVE));
         if (this._firstAction) {
             this._firstAction = false;
         }

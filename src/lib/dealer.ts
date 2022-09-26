@@ -146,13 +146,13 @@ export default class Dealer {
     assert(this._bettingRound !== null);
 
     const player = this._players[this._bettingRound.playerToAct()];
+    assert(player !== null);
     const actions = this._bettingRound.legalActions();
     const actionRange = new ActionRange(actions.chipRange);
     const biggestBet = this._bettingRound.biggestBet();
     const playerBetSize = player.betSize();
     // Below we take care of differentiating between check/call and bet/raise,
     // which the betting_round treats as just "match" and "raise".
-    assert(player !== null);
     if (biggestBet - playerBetSize === 0) {
       actionRange.action |= Action.CHECK;
       assert(actions.canRaise); // If you can check, you can always bet or raise.

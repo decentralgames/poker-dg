@@ -1,11 +1,7 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -22,14 +18,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -54,39 +46,39 @@ var HandRanking;
 })(HandRanking = exports.HandRanking || (exports.HandRanking = {}));
 var Hand = /** @class */ (function () {
     function Hand(ranking, strength, cards) {
-        (0, assert_1.default)(cards.length === 5);
+        assert_1.default(cards.length === 5);
         this._cards = cards;
         this._ranking = ranking;
         this._strength = strength;
     }
     Hand.create = function (holeCards, communityCards) {
-        (0, assert_1.default)(communityCards.cards().length === 5, 'All community cards must be dealt');
-        var cards = __spreadArray(__spreadArray([], holeCards, true), communityCards.cards(), true);
+        assert_1.default(communityCards.cards().length === 5, 'All community cards must be dealt');
+        var cards = __spreadArray(__spreadArray([], holeCards), communityCards.cards());
         return Hand.of(cards);
     };
     Hand.of = function (cards) {
-        (0, assert_1.default)(cards.length === 7);
+        assert_1.default(cards.length === 7);
         var hand1 = Hand._highLowHandEval(cards);
         var hand2 = Hand._straightFlushEval(cards);
         if (hand2 !== null) {
-            return (0, array_1.findMax)([hand1, hand2], Hand.compare);
+            return array_1.findMax([hand1, hand2], Hand.compare);
         }
         return hand1;
     };
     Hand.getRankingOf = function (cards) {
-        (0, assert_1.default)(cards.length >= 5);
+        assert_1.default(cards.length >= 5);
         var hand1 = Hand._highLowHandEval(cards, false);
         var hand2 = Hand._straightFlushEval(cards, false);
         if (hand2 !== null) {
-            return (0, array_1.findMax)([hand1, hand2], Hand.compare).ranking();
+            return array_1.findMax([hand1, hand2], Hand.compare).ranking();
         }
         return hand1.ranking();
     };
     Hand.getRankingListOf = function (cards) {
-        (0, assert_1.default)(cards.length >= 5);
+        assert_1.default(cards.length >= 5);
         var rankings1 = Hand._highLowHandList(cards, false);
         var rankings2 = Hand._straightFlushList(cards, false);
-        return __spreadArray(__spreadArray([], rankings2, true), rankings1, true);
+        return __spreadArray(__spreadArray([], rankings2), rankings1);
     };
     Hand.compare = function (h1, h2) {
         var rankingDiff = h2.ranking() - h1.ranking();
@@ -96,7 +88,7 @@ var Hand = /** @class */ (function () {
         return h2.strength() - h1.strength();
     };
     Hand.nextRank = function (cards) {
-        (0, assert_1.default)(cards.length !== 0);
+        assert_1.default(cards.length !== 0);
         var firstRank = cards[0].rank;
         var secondRankIndex = cards.findIndex(function (card) { return card.rank !== firstRank; });
         return {
@@ -105,7 +97,7 @@ var Hand = /** @class */ (function () {
         };
     };
     Hand.getStrength = function (cards) {
-        (0, assert_1.default)(cards.length === 5);
+        assert_1.default(cards.length === 5);
         var sum = 0;
         var multiplier = Math.pow(13, 4);
         for (;;) {
@@ -126,10 +118,10 @@ var Hand = /** @class */ (function () {
     Hand.getSuitedCards = function (cards, isRiverCheck) {
         if (isRiverCheck === void 0) { isRiverCheck = true; }
         if (isRiverCheck) {
-            (0, assert_1.default)(cards.length === 7);
+            assert_1.default(cards.length === 7);
         }
         else {
-            (0, assert_1.default)(cards.length >= 5);
+            assert_1.default(cards.length >= 5);
         }
         cards.sort(card_1.default.compare);
         var first = 0;
@@ -156,10 +148,10 @@ var Hand = /** @class */ (function () {
     // Returns the subrange which contains the cards forming a straight. Ranks of
     // cards in the resulting range are r, r-1, r-2... except for the wheel.
     Hand.getStraightCards = function (cards) {
-        (0, assert_1.default)(cards.length >= 5);
+        assert_1.default(cards.length >= 5);
         var first = 0;
         for (;;) {
-            var last = (0, array_1.findIndexAdjacent)(cards.slice(first), function (c1, c2) { return c1.rank !== c2.rank + 1; });
+            var last = array_1.findIndexAdjacent(cards.slice(first), function (c1, c2) { return c1.rank !== c2.rank + 1; });
             if (last === -1) {
                 last = cards.length;
             }
@@ -171,7 +163,7 @@ var Hand = /** @class */ (function () {
             }
             else if (last - first === 4) {
                 if (cards[first].rank === card_1.CardRank._5 && cards[0].rank === card_1.CardRank.A) {
-                    (0, array_1.rotate)(cards, first);
+                    array_1.rotate(cards, first);
                     return cards.slice(0, 5);
                 }
             }
@@ -183,17 +175,17 @@ var Hand = /** @class */ (function () {
     };
     // return cards sorted by rank, order of keepFirstN cards is not changed
     Hand.sortRemainingCards = function (cards, keepFirstN) {
-        return __spreadArray(__spreadArray([], cards.slice(0, keepFirstN), true), cards.slice(keepFirstN).sort(function (c1, c2) { return c2.rank - c1.rank; }), true);
+        return __spreadArray(__spreadArray([], cards.slice(0, keepFirstN)), cards.slice(keepFirstN).sort(function (c1, c2) { return c2.rank - c1.rank; }));
     };
     Hand._highLowHandEval = function (cards, isRiverCheck) {
         if (isRiverCheck === void 0) { isRiverCheck = true; }
         if (isRiverCheck) {
-            (0, assert_1.default)(cards.length === 7);
+            assert_1.default(cards.length === 7);
         }
         else {
-            (0, assert_1.default)(cards.length >= 5);
+            assert_1.default(cards.length >= 5);
         }
-        cards = __spreadArray([], cards, true);
+        cards = __spreadArray([], cards);
         var rankOccurrences = new Array(13).fill(0);
         for (var _i = 0, cards_1 = cards; _i < cards_1.length; _i++) {
             var card = cards_1[_i];
@@ -244,12 +236,12 @@ var Hand = /** @class */ (function () {
     Hand._straightFlushEval = function (cards, isRiverCheck) {
         if (isRiverCheck === void 0) { isRiverCheck = true; }
         if (isRiverCheck) {
-            (0, assert_1.default)(cards.length === 7);
+            assert_1.default(cards.length === 7);
         }
         else {
-            (0, assert_1.default)(cards.length >= 5);
+            assert_1.default(cards.length >= 5);
         }
-        cards = __spreadArray([], cards, true);
+        cards = __spreadArray([], cards);
         var suitedCards = Hand.getSuitedCards(cards, isRiverCheck);
         if (suitedCards !== null) {
             var straightCards = this.getStraightCards(suitedCards);
@@ -276,7 +268,7 @@ var Hand = /** @class */ (function () {
         }
         else {
             cards.sort(function (c1, c2) { return c2.rank - c1.rank; });
-            cards = (0, array_1.unique)(cards, function (c1, c2) { return c1.rank !== c2.rank; });
+            cards = array_1.unique(cards, function (c1, c2) { return c1.rank !== c2.rank; });
             if (cards.length < 5) {
                 return null;
             }
@@ -294,12 +286,12 @@ var Hand = /** @class */ (function () {
     Hand._highLowHandList = function (cards, isRiverCheck) {
         if (isRiverCheck === void 0) { isRiverCheck = true; }
         if (isRiverCheck) {
-            (0, assert_1.default)(cards.length === 7);
+            assert_1.default(cards.length === 7);
         }
         else {
-            (0, assert_1.default)(cards.length >= 5);
+            assert_1.default(cards.length >= 5);
         }
-        cards = __spreadArray([], cards, true);
+        cards = __spreadArray([], cards);
         var rankOccurrences = new Array(13).fill(0);
         for (var _i = 0, cards_2 = cards; _i < cards_2.length; _i++) {
             var card = cards_2[_i];
@@ -335,12 +327,12 @@ var Hand = /** @class */ (function () {
     Hand._straightFlushList = function (cards, isRiverCheck) {
         if (isRiverCheck === void 0) { isRiverCheck = true; }
         if (isRiverCheck) {
-            (0, assert_1.default)(cards.length === 7);
+            assert_1.default(cards.length === 7);
         }
         else {
-            (0, assert_1.default)(cards.length >= 5);
+            assert_1.default(cards.length >= 5);
         }
-        cards = __spreadArray([], cards, true);
+        cards = __spreadArray([], cards);
         var suitedCards = Hand.getSuitedCards(cards, isRiverCheck);
         var rankings = [];
         if (suitedCards !== null) {
@@ -354,7 +346,7 @@ var Hand = /** @class */ (function () {
             rankings.push(HandRanking.FLUSH);
         }
         cards.sort(function (c1, c2) { return c2.rank - c1.rank; });
-        cards = (0, array_1.unique)(cards, function (c1, c2) { return c1.rank !== c2.rank; });
+        cards = array_1.unique(cards, function (c1, c2) { return c1.rank !== c2.rank; });
         if (cards.length >= 5) {
             var straightCards = this.getStraightCards(cards);
             if (straightCards !== null) {

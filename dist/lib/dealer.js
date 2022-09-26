@@ -1,11 +1,7 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -22,14 +18,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -51,7 +43,7 @@ var ActionRange = /** @class */ (function () {
     ActionRange.prototype.contains = function (action, bet) {
         var _a, _b;
         if (bet === void 0) { bet = 0; }
-        (0, assert_1.default)(Dealer.isValid(action), 'The action representation must be valid');
+        assert_1.default(Dealer.isValid(action), 'The action representation must be valid');
         return action && Dealer.isAggressive(action)
             ? (_b = (_a = this.chipRange) === null || _a === void 0 ? void 0 : _a.contains(bet)) !== null && _b !== void 0 ? _b : false
             : true;
@@ -85,8 +77,8 @@ var Dealer = /** @class */ (function () {
         this._potManager = new pot_manager_1.default();
         this._holeCards = new Array(numSeats).fill(null);
         this._winners = [];
-        (0, assert_1.default)(deck.length === 52, 'Deck must be whole');
-        (0, assert_1.default)(communityCards.cards().length === 0, 'No community cards should have been dealt');
+        assert_1.default(deck.length === 52, 'Deck must be whole');
+        assert_1.default(communityCards.cards().length === 0, 'No community cards should have been dealt');
     }
     Dealer.isValid = function (action) {
         // Method for counting bits in a 32-bit integer from https://graphics.stanford.edu/~seander/bithacks.html
@@ -102,12 +94,12 @@ var Dealer = /** @class */ (function () {
         return this._handInProgress;
     };
     Dealer.prototype.bettingRoundsCompleted = function () {
-        (0, assert_1.default)(this.handInProgress(), 'Hand must be in progress');
+        assert_1.default(this.handInProgress(), 'Hand must be in progress');
         return this._bettingRoundsCompleted;
     };
     Dealer.prototype.playerToAct = function () {
-        (0, assert_1.default)(this.bettingRoundInProgress(), 'Betting round must be in progress');
-        (0, assert_1.default)(this._bettingRound !== null);
+        assert_1.default(this.bettingRoundInProgress(), 'Betting round must be in progress');
+        assert_1.default(this._bettingRound !== null);
         return this._bettingRound.playerToAct();
     };
     Dealer.prototype.players = function () {
@@ -119,7 +111,7 @@ var Dealer = /** @class */ (function () {
         return this._players;
     };
     Dealer.prototype.roundOfBetting = function () {
-        (0, assert_1.default)(this.handInProgress(), 'Hand must be in progress');
+        assert_1.default(this.handInProgress(), 'Hand must be in progress');
         return this._roundOfBetting;
     };
     Dealer.prototype.nonFoldedPlayers = function () {
@@ -143,19 +135,19 @@ var Dealer = /** @class */ (function () {
         return (_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.isContested()) !== null && _b !== void 0 ? _b : false;
     };
     Dealer.prototype.legalActions = function () {
-        (0, assert_1.default)(this.bettingRoundInProgress(), 'Betting round must be in progress');
-        (0, assert_1.default)(this._bettingRound !== null);
+        assert_1.default(this.bettingRoundInProgress(), 'Betting round must be in progress');
+        assert_1.default(this._bettingRound !== null);
         var player = this._players[this._bettingRound.playerToAct()];
+        assert_1.default(player !== null);
         var actions = this._bettingRound.legalActions();
         var actionRange = new ActionRange(actions.chipRange);
         var biggestBet = this._bettingRound.biggestBet();
         var playerBetSize = player.betSize();
         // Below we take care of differentiating between check/call and bet/raise,
         // which the betting_round treats as just "match" and "raise".
-        (0, assert_1.default)(player !== null);
         if (biggestBet - playerBetSize === 0) {
             actionRange.action |= Action.CHECK;
-            (0, assert_1.default)(actions.canRaise); // If you can check, you can always bet or raise.
+            assert_1.default(actions.canRaise); // If you can check, you can always bet or raise.
             // If this guy can check, with his existing bet_size, he is the big blind.
             if (playerBetSize > 0) {
                 actionRange.action |= Action.RAISE;
@@ -178,7 +170,7 @@ var Dealer = /** @class */ (function () {
         return actionRange;
     };
     Dealer.prototype.pots = function () {
-        (0, assert_1.default)(this.handInProgress(), 'Hand must be in progress');
+        assert_1.default(this.handInProgress(), 'Hand must be in progress');
         return this._potManager.pots();
     };
     Dealer.prototype.button = function () {
@@ -191,11 +183,11 @@ var Dealer = /** @class */ (function () {
         };
     };
     Dealer.prototype.holeCards = function () {
-        (0, assert_1.default)(this.handInProgress() || this.bettingRoundInProgress(), 'Hand must be in progress or showdown must have ended');
+        assert_1.default(this.handInProgress() || this.bettingRoundInProgress(), 'Hand must be in progress or showdown must have ended');
         return this._holeCards;
     };
     Dealer.prototype.startHand = function () {
-        (0, assert_1.default)(!this.handInProgress(), 'Hand must not be in progress');
+        assert_1.default(!this.handInProgress(), 'Hand must not be in progress');
         this._bettingRoundsCompleted = false;
         this._roundOfBetting = community_cards_1.RoundOfBetting.PREFLOP;
         this._winners = [];
@@ -204,14 +196,14 @@ var Dealer = /** @class */ (function () {
         this.dealHoleCards();
         if (this._players.filter(function (player) { return player !== null && player.stack() !== 0; })
             .length > 1) {
-            this._bettingRound = new betting_round_1.default(__spreadArray([], this._players, true), this._players.map(function (player) { return !!player; }), firstAction, this._forcedBets.blinds.big, this._forcedBets.blinds.big);
+            this._bettingRound = new betting_round_1.default(__spreadArray([], this._players), this._players.map(function (player) { return !!player; }), firstAction, this._forcedBets.blinds.big, this._forcedBets.blinds.big);
         }
         this._handInProgress = true;
     };
     Dealer.prototype.actionTaken = function (action, bet) {
-        (0, assert_1.default)(this.bettingRoundInProgress(), 'Betting round must be in progress');
-        (0, assert_1.default)(this.legalActions().contains(action, bet), 'Action must be legal');
-        (0, assert_1.default)(this._bettingRound !== null);
+        assert_1.default(this.bettingRoundInProgress(), 'Betting round must be in progress');
+        assert_1.default(this.legalActions().contains(action, bet), 'Action must be legal');
+        assert_1.default(this._bettingRound !== null);
         if (action & Action.CHECK || action & Action.CALL) {
             this._bettingRound.actionTaken(betting_round_1.Action.MATCH);
         }
@@ -219,9 +211,9 @@ var Dealer = /** @class */ (function () {
             this._bettingRound.actionTaken(betting_round_1.Action.RAISE, bet);
         }
         else {
-            (0, assert_1.default)(action & Action.FOLD);
+            assert_1.default(action & Action.FOLD);
             var foldingPlayer = this._players[this.playerToAct()];
-            (0, assert_1.default)(foldingPlayer !== null);
+            assert_1.default(foldingPlayer !== null);
             this._potManager.betFolded(foldingPlayer.betSize());
             foldingPlayer.takeFromBet(foldingPlayer.betSize());
             this._players[this.playerToAct()] = null;
@@ -231,8 +223,8 @@ var Dealer = /** @class */ (function () {
     };
     Dealer.prototype.endBettingRound = function () {
         var _a, _b, _c, _d, _e, _f;
-        (0, assert_1.default)(!this._bettingRoundsCompleted, 'Betting rounds must not be completed');
-        (0, assert_1.default)(!this.bettingRoundInProgress(), 'Betting round must not be in progress');
+        assert_1.default(!this._bettingRoundsCompleted, 'Betting rounds must not be completed');
+        assert_1.default(!this.bettingRoundInProgress(), 'Betting round must not be in progress');
         this._potManager.collectBetsFrom(this._players);
         if (((_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.numActivePlayers()) !== null && _b !== void 0 ? _b : 0) <= 1) {
             this._roundOfBetting = community_cards_1.RoundOfBetting.RIVER;
@@ -250,15 +242,15 @@ var Dealer = /** @class */ (function () {
         }
         else if (this._roundOfBetting < community_cards_1.RoundOfBetting.RIVER) {
             // Start the next betting round.
-            this._roundOfBetting = (0, community_cards_1.next)(this._roundOfBetting);
+            this._roundOfBetting = community_cards_1.next(this._roundOfBetting);
             this._players = (_d = (_c = this._bettingRound) === null || _c === void 0 ? void 0 : _c.players()) !== null && _d !== void 0 ? _d : [];
             var nonFoldedPlayers = (_f = (_e = this._bettingRound) === null || _e === void 0 ? void 0 : _e.nonFoldedPlayers()) !== null && _f !== void 0 ? _f : [];
-            this._bettingRound = new betting_round_1.default(__spreadArray([], this._players, true), nonFoldedPlayers, this.nextOrWrap(this._button), this._forcedBets.blinds.big);
+            this._bettingRound = new betting_round_1.default(__spreadArray([], this._players), nonFoldedPlayers, this.nextOrWrap(this._button), this._forcedBets.blinds.big);
             this.dealCommunityCards();
-            (0, assert_1.default)(this._bettingRoundsCompleted === false);
+            assert_1.default(this._bettingRoundsCompleted === false);
         }
         else {
-            (0, assert_1.default)(this._roundOfBetting === community_cards_1.RoundOfBetting.RIVER);
+            assert_1.default(this._roundOfBetting === community_cards_1.RoundOfBetting.RIVER);
             this._bettingRoundsCompleted = true;
             // Now you call showdown()
         }
@@ -273,14 +265,14 @@ var Dealer = /** @class */ (function () {
         return (_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.isRaiseValid(bet)) !== null && _b !== void 0 ? _b : false;
     };
     Dealer.prototype.winners = function () {
-        (0, assert_1.default)(!this.handInProgress(), 'Hand must not be in progress');
+        assert_1.default(!this.handInProgress(), 'Hand must not be in progress');
         return this._winners;
     };
     Dealer.prototype.showdown = function () {
         var _this = this;
-        (0, assert_1.default)(this._roundOfBetting === community_cards_1.RoundOfBetting.RIVER, 'Round of betting must be river');
-        (0, assert_1.default)(!this.bettingRoundInProgress(), 'Betting round must not be in progress');
-        (0, assert_1.default)(this.bettingRoundsCompleted(), 'Betting rounds must be completed');
+        assert_1.default(this._roundOfBetting === community_cards_1.RoundOfBetting.RIVER, 'Round of betting must be river');
+        assert_1.default(!this.bettingRoundInProgress(), 'Betting round must not be in progress');
+        assert_1.default(this.bettingRoundsCompleted(), 'Betting rounds must be completed');
         this._handInProgress = false;
         if ((this._potManager.pots().length <= 1 ||
             this._potManager.pots()[1].size() === 0) &&
@@ -288,7 +280,7 @@ var Dealer = /** @class */ (function () {
             // No need to evaluate the hand. There is only one player.
             var index = this._potManager.pots()[0].eligiblePlayers()[0];
             var player = this._players[index];
-            (0, assert_1.default)(player !== null);
+            assert_1.default(player !== null);
             player.addToStack(this._potManager.pots()[0].size());
             return this._players;
             // TODO: Also, no reveals in this case. Reveals are only necessary when there is >=2 players.
@@ -307,7 +299,7 @@ var Dealer = /** @class */ (function () {
                 var second = _b[1];
                 return hand_1.default.compare(first, second);
             });
-            var lastWinnerIndex = (0, array_1.findIndexAdjacent)(playerResults, function (_a, _b) {
+            var lastWinnerIndex = array_1.findIndexAdjacent(playerResults, function (_a, _b) {
                 var first = _a[1];
                 var second = _b[1];
                 return hand_1.default.compare(first, second) !== 0;
@@ -330,7 +322,7 @@ var Dealer = /** @class */ (function () {
             this_1._winners.push(winningPlayerResults.map(function (playerResult) {
                 var seatIndex = playerResult[0];
                 var holeCards = _this._holeCards[seatIndex];
-                return __spreadArray(__spreadArray([], playerResult, true), [holeCards], false);
+                return __spreadArray(__spreadArray([], playerResult), [holeCards]);
             }));
             if (oddChips !== 0) {
                 // Distribute the odd chips to the first players, counting clockwise, after the dealer button
@@ -341,9 +333,9 @@ var Dealer = /** @class */ (function () {
                 });
                 var seat = this_1._button;
                 while (oddChips !== 0) {
-                    seat = (0, array_1.nextOrWrap)(winners_1, seat);
+                    seat = array_1.nextOrWrap(winners_1, seat);
                     var winner = winners_1[seat];
-                    (0, assert_1.default)(winner !== null);
+                    assert_1.default(winner !== null);
                     winner.addToStack(1);
                     oddChips--;
                 }
@@ -357,7 +349,7 @@ var Dealer = /** @class */ (function () {
         return this._players;
     };
     Dealer.prototype.nextOrWrap = function (seat) {
-        return (0, array_1.nextOrWrap)(this._players, seat);
+        return array_1.nextOrWrap(this._players, seat);
     };
     Dealer.prototype.collectAnte = function () {
         if (this._forcedBets.ante === undefined) {
@@ -382,12 +374,12 @@ var Dealer = /** @class */ (function () {
             seat = this.nextOrWrap(seat);
         }
         var smallBlind = this._players[seat];
-        (0, assert_1.default)(smallBlind !== null);
+        assert_1.default(smallBlind !== null);
         this._smallBlindIndex = seat;
         smallBlind.bet(Math.min(this._forcedBets.blinds.small, smallBlind.totalChips()));
         seat = this.nextOrWrap(seat);
         var bigBlind = this._players[seat];
-        (0, assert_1.default)(bigBlind !== null);
+        assert_1.default(bigBlind !== null);
         this._bigBlindIndex = seat;
         bigBlind.bet(Math.min(this._forcedBets.blinds.big, bigBlind.totalChips()));
         return seat;

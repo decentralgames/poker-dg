@@ -9,7 +9,7 @@ var assert_1 = __importDefault(require("assert"));
 function shuffle(array) {
     var _a;
     for (var index = array.length - 1; index > 0; index--) {
-        var newIndex = (0, crypto_1.randomInt)(index + 1);
+        var newIndex = crypto_1.randomInt(index + 1);
         _a = [array[newIndex], array[index]], array[index] = _a[0], array[newIndex] = _a[1];
     }
 }
@@ -57,7 +57,7 @@ function unique(array, predicate) {
 }
 exports.unique = unique;
 function findMax(array, compare) {
-    (0, assert_1.default)(array.length > 0);
+    assert_1.default(array.length > 0);
     return array.sort(compare)[0];
 }
 exports.findMax = findMax;
