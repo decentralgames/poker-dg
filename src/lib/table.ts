@@ -207,6 +207,13 @@ export default class Table {
       if (automaticAction !== null) {
         this.takeAutomaticAction(automaticAction);
         this._automaticActions[playerToAct] = null;
+      } else if (
+        this._handPlayers !== undefined && (
+          this._handPlayers[playerToAct]?.totalChips() ==
+          this._handPlayers[playerToAct]?.betSize()
+        )
+      ) {
+        this.takeAutomaticAction(AutomaticAction.ALL_IN);
       } else {
         break;
       }

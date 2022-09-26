@@ -169,6 +169,10 @@ var Table = /** @class */ (function () {
                 this.takeAutomaticAction(automaticAction);
                 this._automaticActions[playerToAct] = null;
             }
+            else if (this._handPlayers !== undefined && (((_a = this._handPlayers[playerToAct]) === null || _a === void 0 ? void 0 : _a.totalChips()) ==
+                ((_b = this._handPlayers[playerToAct]) === null || _b === void 0 ? void 0 : _b.betSize()))) {
+                this.takeAutomaticAction(AutomaticAction.ALL_IN);
+            }
             else {
                 break;
             }
