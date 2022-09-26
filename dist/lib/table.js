@@ -153,6 +153,7 @@ var Table = /** @class */ (function () {
         return this._dealer.holeCards();
     };
     Table.prototype.actionTaken = function (action, bet) {
+        var _a, _b;
         assert_1.default(this.bettingRoundInProgress(), 'Betting round must be in progress');
         assert_1.default(this._dealer !== undefined);
         assert_1.default(this._automaticActions !== undefined);
@@ -164,6 +165,10 @@ var Table = /** @class */ (function () {
             if (automaticAction !== null) {
                 this.takeAutomaticAction(automaticAction);
                 this._automaticActions[playerToAct] = null;
+            }
+            else if (this._handPlayers !== undefined && (((_a = this._handPlayers[playerToAct]) === null || _a === void 0 ? void 0 : _a.totalChips()) ==
+                ((_b = this._handPlayers[playerToAct]) === null || _b === void 0 ? void 0 : _b.betSize()))) {
+                this.takeAutomaticAction(AutomaticAction.ALL_IN);
             }
             else {
                 break;
