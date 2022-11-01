@@ -198,6 +198,7 @@ export default class Table {
     assert(this._dealer !== undefined);
     assert(this._automaticActions !== undefined);
 
+    this._automaticActions[this.playerToAct()] = null;
     this._dealer.actionTaken(action, bet);
     while (this._dealer.bettingRoundInProgress()) {
       this.amendAutomaticActions();
@@ -300,11 +301,9 @@ export default class Table {
     assert(player !== null);
     const betSize = player.betSize();
     const totalChips = player.totalChips();
-    let legalActions = AutomaticAction.FOLD | AutomaticAction.ALL_IN;
+    let legalActions = AutomaticAction.CHECK_FOLD | AutomaticAction.ALL_IN;
     const canCheck = biggestBet - betSize === 0;
-    if (canCheck) {
-      legalActions |= AutomaticAction.CHECK_FOLD | AutomaticAction.CHECK;
-    } else {
+    if (!canCheck) {
       legalActions |= AutomaticAction.CALL;
     }
 
@@ -422,16 +421,8 @@ export default class Table {
       if (automaticAction !== null) {
         const player = this._handPlayers[s];
         if (player) {
-          const isContested = this._dealer.isContested();
-          const betGap = biggestBet - player.betSize();
           const totalChips = player.totalChips();
-          if (automaticAction & AutomaticAction.CHECK_FOLD && betGap > 0) {
-            this._automaticActions[s] = AutomaticAction.FOLD;
-          } else if (automaticAction & AutomaticAction.CHECK && betGap > 0) {
-            this._automaticActions[s] = null;
-          } /* else if (automaticAction & AutomaticAction.CALL && isContested) {
-                      this._automaticActions[s] = null
-                  }*/ else if (
+          if (
             automaticAction & AutomaticAction.CALL_ANY &&
             biggestBet >= totalChips
           ) {

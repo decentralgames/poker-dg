@@ -232,12 +232,9 @@ var Table = /** @class */ (function () {
         assert_1.default(player !== null);
         var betSize = player.betSize();
         var totalChips = player.totalChips();
-        var legalActions = AutomaticAction.FOLD | AutomaticAction.ALL_IN;
+        var legalActions = AutomaticAction.CHECK_FOLD | AutomaticAction.ALL_IN;
         var canCheck = biggestBet - betSize === 0;
-        if (canCheck) {
-            legalActions |= AutomaticAction.CHECK_FOLD | AutomaticAction.CHECK;
-        }
-        else {
+        if (!canCheck) {
             legalActions |= AutomaticAction.CALL;
         }
         if (biggestBet < totalChips) {
@@ -324,18 +321,8 @@ var Table = /** @class */ (function () {
             if (automaticAction !== null) {
                 var player = this._handPlayers[s];
                 if (player) {
-                    var isContested = this._dealer.isContested();
-                    var betGap = biggestBet - player.betSize();
                     var totalChips = player.totalChips();
-                    if (automaticAction & AutomaticAction.CHECK_FOLD && betGap > 0) {
-                        this._automaticActions[s] = AutomaticAction.FOLD;
-                    }
-                    else if (automaticAction & AutomaticAction.CHECK && betGap > 0) {
-                        this._automaticActions[s] = null;
-                    } /* else if (automaticAction & AutomaticAction.CALL && isContested) {
-                                this._automaticActions[s] = null
-                            }*/
-                    else if (automaticAction & AutomaticAction.CALL_ANY &&
+                    if (automaticAction & AutomaticAction.CALL_ANY &&
                         biggestBet >= totalChips) {
                         this._automaticActions[s] = AutomaticAction.CALL;
                     }
