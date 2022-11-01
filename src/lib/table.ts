@@ -207,25 +207,25 @@ export default class Table {
 
     this._automaticActions[this.playerToAct()] = null;
     this._dealer.actionTaken(action, bet);
-    while (this._dealer.bettingRoundInProgress()) {
-      this.amendAutomaticActions();
+    // while (this._dealer.bettingRoundInProgress()) {
+    //   this.amendAutomaticActions();
 
-      const playerToAct = this.playerToAct();
-      const automaticAction = this._automaticActions[playerToAct];
-      if (automaticAction !== null) {
-        this.takeAutomaticAction(automaticAction);
-        this._automaticActions[playerToAct] = null;
-      } else if (
-        this._handPlayers !== undefined && (
-          this._handPlayers[playerToAct]?.totalChips() ==
-          this._handPlayers[playerToAct]?.betSize()
-        )
-      ) {
-        this.takeAutomaticAction(AutomaticAction.ALL_IN);
-      } else {
-        break;
-      }
-    }
+    //   const playerToAct = this.playerToAct();
+    //   const automaticAction = this._automaticActions[playerToAct];
+    //   if (automaticAction !== null) {
+    //     this.takeAutomaticAction(automaticAction);
+    //     this._automaticActions[playerToAct] = null;
+    //   } else if (
+    //     this._handPlayers !== undefined && (
+    //       this._handPlayers[playerToAct]?.totalChips() ==
+    //       this._handPlayers[playerToAct]?.betSize()
+    //     )
+    //   ) {
+    //     this.takeAutomaticAction(AutomaticAction.ALL_IN);
+    //   } else {
+    //     break;
+    //   }
+    // }
 
     if (this.bettingRoundInProgress() && this.singleActivePlayerRemaining()) {
       // We only need to take action for this one player, and the other automatic actions will unfold automatically.
@@ -326,7 +326,10 @@ export default class Table {
       this.canSetAutomaticAction(seat),
       'Player must be allowed to set automatic actions'
     );
-    assert(seat !== this.playerToAct(), 'Player must not be the player to act');
+    assert(
+      action === null || seat !== this.playerToAct(),
+      'Player must not be the player to act'
+    );
     assert(
       action === null || bitCount(action) === 1,
       'Player must pick one automatic action or null'
@@ -379,7 +382,7 @@ export default class Table {
     return this._dealer?.isRaiseValid(bet) ?? false;
   }
 
-  private takeAutomaticAction(automaticAction: AutomaticAction): void {
+  takeAutomaticAction(automaticAction: AutomaticAction): void {
     assert(this._dealer !== undefined);
     assert(this._handPlayers !== undefined);
     const player = this._handPlayers[this._dealer.playerToAct()];
@@ -417,7 +420,7 @@ export default class Table {
   // call -- you cannot lose your ability to call if you were able to do it in the first place
   // call_any -- you can lose your ability to call_any, which only leaves the normal call (doubt cleared)
   //          condition: biggest_bet >= total_chips
-  private amendAutomaticActions(): void {
+  amendAutomaticActions(): void {
     assert(this._dealer !== undefined);
     assert(this._automaticActions !== undefined);
     assert(this._handPlayers !== undefined);

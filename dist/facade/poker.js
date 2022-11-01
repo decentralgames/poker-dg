@@ -179,6 +179,12 @@ var Poker = /** @class */ (function () {
     Poker.prototype.actionTaken = function (action, betSize) {
         this._table.actionTaken(dealer_1.Action[action.toUpperCase()], betSize);
     };
+    Poker.prototype.takeAutomaticAction = function (automaticAction) {
+        this._table.takeAutomaticAction(stringToAutomaticActionFlag(automaticAction));
+    };
+    Poker.prototype.amendAutomaticActions = function () {
+        this._table.amendAutomaticActions();
+    };
     Poker.prototype.endBettingRound = function () {
         this._table.endBettingRound();
     };

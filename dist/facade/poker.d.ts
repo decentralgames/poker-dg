@@ -60,6 +60,8 @@ export default class Poker {
     holeCards(): (Card[] | null)[];
     playerCards(seat: number): any;
     actionTaken(action: 'fold' | 'check' | 'call' | 'bet' | 'raise', betSize?: number): void;
+    takeAutomaticAction(automaticAction: AutomaticAction): void;
+    amendAutomaticActions(): void;
     endBettingRound(): void;
     showdown(): void;
     winners(): [

@@ -158,28 +158,29 @@ var Table = /** @class */ (function () {
         return this._dealer.holeCards();
     };
     Table.prototype.actionTaken = function (action, bet) {
-        var _a, _b;
         assert_1.default(this.bettingRoundInProgress(), 'Betting round must be in progress');
         assert_1.default(this._dealer !== undefined);
         assert_1.default(this._automaticActions !== undefined);
         this._automaticActions[this.playerToAct()] = null;
         this._dealer.actionTaken(action, bet);
-        while (this._dealer.bettingRoundInProgress()) {
-            this.amendAutomaticActions();
-            var playerToAct = this.playerToAct();
-            var automaticAction = this._automaticActions[playerToAct];
-            if (automaticAction !== null) {
-                this.takeAutomaticAction(automaticAction);
-                this._automaticActions[playerToAct] = null;
-            }
-            else if (this._handPlayers !== undefined && (((_a = this._handPlayers[playerToAct]) === null || _a === void 0 ? void 0 : _a.totalChips()) ==
-                ((_b = this._handPlayers[playerToAct]) === null || _b === void 0 ? void 0 : _b.betSize()))) {
-                this.takeAutomaticAction(AutomaticAction.ALL_IN);
-            }
-            else {
-                break;
-            }
-        }
+        // while (this._dealer.bettingRoundInProgress()) {
+        //   this.amendAutomaticActions();
+        //   const playerToAct = this.playerToAct();
+        //   const automaticAction = this._automaticActions[playerToAct];
+        //   if (automaticAction !== null) {
+        //     this.takeAutomaticAction(automaticAction);
+        //     this._automaticActions[playerToAct] = null;
+        //   } else if (
+        //     this._handPlayers !== undefined && (
+        //       this._handPlayers[playerToAct]?.totalChips() ==
+        //       this._handPlayers[playerToAct]?.betSize()
+        //     )
+        //   ) {
+        //     this.takeAutomaticAction(AutomaticAction.ALL_IN);
+        //   } else {
+        //     break;
+        //   }
+        // }
         if (this.bettingRoundInProgress() && this.singleActivePlayerRemaining()) {
             // We only need to take action for this one player, and the other automatic actions will unfold automatically.
             this.actPassively();
@@ -250,7 +251,7 @@ var Table = /** @class */ (function () {
     };
     Table.prototype.setAutomaticAction = function (seat, action) {
         assert_1.default(this.canSetAutomaticAction(seat), 'Player must be allowed to set automatic actions');
-        assert_1.default(seat !== this.playerToAct(), 'Player must not be the player to act');
+        assert_1.default(action === null || seat !== this.playerToAct(), 'Player must not be the player to act');
         assert_1.default(action === null || bit_1.bitCount(action) === 1, 'Player must pick one automatic action or null');
         assert_1.default(action === null || action & this.legalAutomaticActions(seat), 'Given automatic action must be legal');
         assert_1.default(this._automaticActions !== undefined);

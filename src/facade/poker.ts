@@ -234,6 +234,14 @@ export default class Poker {
     this._table.actionTaken(ActionFlag[action.toUpperCase()], betSize);
   }
 
+  takeAutomaticAction(automaticAction: AutomaticAction): void {
+    this._table.takeAutomaticAction(stringToAutomaticActionFlag(automaticAction));
+  }
+
+  amendAutomaticActions(): void {
+    this._table.amendAutomaticActions();
+  }
+
   endBettingRound(): void {
     this._table.endBettingRound();
   }
