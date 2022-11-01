@@ -15,6 +15,7 @@ export default class Round {
   private _contested: boolean = false;
   private _firstAction: boolean = true;
   private _numActivePlayers: number = 0;
+  private _actionTakenInRound: boolean[]; // If player acted in the current round
 
   constructor(
     activePlayers: boolean[],
@@ -26,6 +27,7 @@ export default class Round {
     this._playerToAct = firstToAct;
     this._lastAggressiveActor = firstToAct;
     this._numActivePlayers = activePlayers.filter((player) => !!player).length;
+    this._actionTakenInRound = activePlayers.map((_) => false);
 
     assert(firstToAct < activePlayers.length);
   }
@@ -36,6 +38,10 @@ export default class Round {
 
   nonFoldedPlayers(): boolean[] {
     return this._nonFoldedPlayers;
+  }
+
+  actionTakenInRound(): boolean[] {
+    return this._actionTakenInRound;
   }
 
   playerToAct(): SeatIndex {
@@ -84,6 +90,8 @@ export default class Round {
       }
       --this._numActivePlayers;
     }
+
+    this._actionTakenInRound[this._playerToAct] = true;
 
     this.incrementPlayer();
   }

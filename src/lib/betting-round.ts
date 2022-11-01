@@ -84,6 +84,10 @@ export default class BettingRound {
     return this._round.nonFoldedPlayers();
   }
 
+  actionTakenInRound(): boolean[] {
+    return this._round.actionTakenInRound();
+  }
+
   numActivePlayers(): number {
     return this._round.numActivePlayers();
   }

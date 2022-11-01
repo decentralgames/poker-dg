@@ -125,6 +125,10 @@ export default class Dealer {
     return this._bettingRound?.nonFoldedPlayers() ?? [];
   }
 
+  actionTakenInRound(): boolean[] {
+    return this._bettingRound?.actionTakenInRound() ?? [];
+  }
+
   numActivePlayers(): number {
     return this._bettingRound?.numActivePlayers() ?? 0;
   }

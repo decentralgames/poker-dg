@@ -35,6 +35,7 @@ export default class Table {
     blinds(): Blinds;
     seats(): SeatArray;
     handPlayers(): SeatArray;
+    actionTakenInRound(): boolean[];
     nonFoldedPlayers(): boolean[];
     numActivePlayers(): number;
     pots(): Pot[];

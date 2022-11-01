@@ -74,6 +74,11 @@ var Table = /** @class */ (function () {
         assert_1.default(this._dealer !== undefined);
         return this._dealer.players();
     };
+    Table.prototype.actionTakenInRound = function () {
+        assert_1.default(this.handInProgress(), 'Hand must be in progress');
+        assert_1.default(this._dealer !== undefined);
+        return this._dealer.actionTakenInRound();
+    };
     Table.prototype.nonFoldedPlayers = function () {
         assert_1.default(this.handInProgress(), 'Hand must be in progress');
         assert_1.default(this._dealer !== undefined);
@@ -157,6 +162,7 @@ var Table = /** @class */ (function () {
         assert_1.default(this.bettingRoundInProgress(), 'Betting round must be in progress');
         assert_1.default(this._dealer !== undefined);
         assert_1.default(this._automaticActions !== undefined);
+        this._automaticActions[this.playerToAct()] = null;
         this._dealer.actionTaken(action, bet);
         while (this._dealer.bettingRoundInProgress()) {
             this.amendAutomaticActions();

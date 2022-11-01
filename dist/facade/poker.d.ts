@@ -30,6 +30,7 @@ export default class Poker {
         betSize: number;
     } | null)[];
     nonFoldedPlayers(): boolean[];
+    actionTakenInRound(): boolean[];
     numActivePlayers(): number;
     pots(): {
         size: number;

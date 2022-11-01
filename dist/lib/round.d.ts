@@ -12,9 +12,11 @@ export default class Round {
     private _contested;
     private _firstAction;
     private _numActivePlayers;
+    private _actionTakenInRound;
     constructor(activePlayers: boolean[], nonFoldedPlayers: boolean[], firstToAct: SeatIndex);
     activePlayers(): boolean[];
     nonFoldedPlayers(): boolean[];
+    actionTakenInRound(): boolean[];
     playerToAct(): SeatIndex;
     lastAggressiveActor(): SeatIndex;
     numActivePlayers(): number;

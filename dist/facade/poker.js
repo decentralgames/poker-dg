@@ -113,6 +113,9 @@ var Poker = /** @class */ (function () {
     Poker.prototype.nonFoldedPlayers = function () {
         return this._table.nonFoldedPlayers();
     };
+    Poker.prototype.actionTakenInRound = function () {
+        return this._table.actionTakenInRound();
+    };
     Poker.prototype.numActivePlayers = function () {
         return this._table.numActivePlayers();
     };

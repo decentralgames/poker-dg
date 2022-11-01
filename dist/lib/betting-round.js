@@ -78,6 +78,9 @@ var BettingRound = /** @class */ (function () {
     BettingRound.prototype.nonFoldedPlayers = function () {
         return this._round.nonFoldedPlayers();
     };
+    BettingRound.prototype.actionTakenInRound = function () {
+        return this._round.actionTakenInRound();
+    };
     BettingRound.prototype.numActivePlayers = function () {
         return this._round.numActivePlayers();
     };

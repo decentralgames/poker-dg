@@ -118,6 +118,10 @@ var Dealer = /** @class */ (function () {
         var _a, _b;
         return (_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.nonFoldedPlayers()) !== null && _b !== void 0 ? _b : [];
     };
+    Dealer.prototype.actionTakenInRound = function () {
+        var _a, _b;
+        return (_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.actionTakenInRound()) !== null && _b !== void 0 ? _b : [];
+    };
     Dealer.prototype.numActivePlayers = function () {
         var _a, _b;
         return (_b = (_a = this._bettingRound) === null || _a === void 0 ? void 0 : _a.numActivePlayers()) !== null && _b !== void 0 ? _b : 0;

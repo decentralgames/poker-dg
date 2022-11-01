@@ -47,6 +47,7 @@ export default class Dealer {
     bettingRoundPlayers(): SeatArray;
     roundOfBetting(): RoundOfBetting;
     nonFoldedPlayers(): boolean[];
+    actionTakenInRound(): boolean[];
     numActivePlayers(): number;
     biggestBet(): Chips;
     bettingRoundInProgress(): boolean;

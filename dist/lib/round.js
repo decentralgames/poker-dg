@@ -21,6 +21,7 @@ var Round = /** @class */ (function () {
         this._playerToAct = firstToAct;
         this._lastAggressiveActor = firstToAct;
         this._numActivePlayers = activePlayers.filter(function (player) { return !!player; }).length;
+        this._actionTakenInRound = activePlayers.map(function (_) { return false; });
         assert_1.default(firstToAct < activePlayers.length);
     }
     Round.prototype.activePlayers = function () {
@@ -28,6 +29,9 @@ var Round = /** @class */ (function () {
     };
     Round.prototype.nonFoldedPlayers = function () {
         return this._nonFoldedPlayers;
+    };
+    Round.prototype.actionTakenInRound = function () {
+        return this._actionTakenInRound;
     };
     Round.prototype.playerToAct = function () {
         return this._playerToAct;
@@ -67,6 +71,7 @@ var Round = /** @class */ (function () {
             }
             --this._numActivePlayers;
         }
+        this._actionTakenInRound[this._playerToAct] = true;
         this.incrementPlayer();
     };
     Round.prototype.standUp = function (seat) {

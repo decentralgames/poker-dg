@@ -142,6 +142,10 @@ export default class Poker {
     return this._table.nonFoldedPlayers();
   }
 
+  actionTakenInRound(): boolean[] {
+    return this._table.actionTakenInRound();
+  }
+
   numActivePlayers(): number {
     return this._table.numActivePlayers();
   }
