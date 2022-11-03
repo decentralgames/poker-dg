@@ -116,7 +116,9 @@ export default class BettingRound {
     if (action === Action.RAISE) {
       assert(this.isRaiseValid(bet));
       player.bet(bet);
-      this._minRaise = bet - this._biggestBet;
+      // update min raise only if player does not shove before matching current raise
+      const playerRaise = bet - this._biggestBet;
+      this._minRaise = (playerRaise >= this._minRaise) ? playerRaise : this._minRaise;
       this._biggestBet = bet;
       let actionFlag = RoundAction.AGGRESSIVE;
       if (player.stack() === 0) {
