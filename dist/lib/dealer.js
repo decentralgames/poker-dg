@@ -171,7 +171,7 @@ var Dealer = /** @class */ (function () {
         }
         else {
             actionRange.action |= Action.CALL;
-            // If you can call, you may or may not be able to raise.
+            // If you can call, you may or may not be able to raise based.
             var roundBigBlind = this._forcedBets.blinds.big;
             var roundSmallBlind = this._forcedBets.blinds.small;
             var isSmallBlind = playerIndex === this._smallBlindIndex;
@@ -181,11 +181,11 @@ var Dealer = /** @class */ (function () {
             var playerBetMinusBlinds = (this._roundOfBetting !== community_cards_1.RoundOfBetting.PREFLOP) ? playerBetSize :
                 isBigBlind ? (playerBetSize - roundBigBlind) :
                     isSmallBlind ? (playerBetSize - roundSmallBlind) : playerBetSize;
-            //const validRaiseOnTable = playerBetSize*2 <= biggestBet; // Players cannot re-raise if they haven't been raised by at least the minimum amount
+            // Amount player is currently being raised by
             var playerWasRaisedBy = biggestBet - playerBetMinusBlinds;
             var minRaise = this._bettingRound.minRaise();
+            // If player is being raised by at least the minimum, they can re-raise again (elsewise, a player shoved before matching the min raise)
             var validRaiseOnTable = playerWasRaisedBy >= minRaise;
-            console.log("Player is betting", playerBetSize, playerBetMinusBlinds, playerWasRaisedBy, minRaise, validRaiseOnTable);
             if (actions.canRaise && (hasNotBetOrPostedBlinds || validRaiseOnTable)) {
                 actionRange.action |= Action.RAISE;
             }

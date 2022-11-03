@@ -109,9 +109,9 @@ var BettingRound = /** @class */ (function () {
         if (action === Action.RAISE) {
             (0, assert_1.default)(this.isRaiseValid(bet));
             player.bet(bet);
+            // update min raise only if player does not shove before matching current raise
             var playerRaise = bet - this._biggestBet;
             this._minRaise = (playerRaise >= this._minRaise) ? playerRaise : this._minRaise;
-            console.log("Updated min raise to", this._minRaise);
             this._biggestBet = bet;
             var actionFlag = round_1.Action.AGGRESSIVE;
             if (player.stack() === 0) {
