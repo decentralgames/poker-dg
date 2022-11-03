@@ -16,6 +16,7 @@ import Card from './card';
 import Player from './player';
 import { Blinds } from 'types/blinds';
 
+
 export class ActionRange {
   action: Action = Action.FOLD; // You can always fold
   chipRange?: ChipRange;
@@ -149,12 +150,14 @@ export default class Dealer {
     assert(this.bettingRoundInProgress(), 'Betting round must be in progress');
     assert(this._bettingRound !== null);
 
-    const player = this._players[this._bettingRound.playerToAct()];
+    const playerIndex = this._bettingRound.playerToAct();
+    const player = this._players[playerIndex];
     assert(player !== null);
     const actions = this._bettingRound.legalActions();
     const actionRange = new ActionRange(actions.chipRange);
     const biggestBet = this._bettingRound.biggestBet();
-    const playerBetSize = player.betSize();
+    const playerBetSize = player.betSize(); //total amount a player bets
+    
     // Below we take care of differentiating between check/call and bet/raise,
     // which the betting_round treats as just "match" and "raise".
     if (biggestBet - playerBetSize === 0) {
@@ -169,10 +172,22 @@ export default class Dealer {
     } else {
       actionRange.action |= Action.CALL;
 
-      // If you can call, you may or may not be able to raise.
+      // If you can call, you may or may not be able to raise based.
       const roundBigBlind = this._forcedBets.blinds.big;
+      const roundSmallBlind = this._forcedBets.blinds.small;
+      const isSmallBlind = playerIndex === this._smallBlindIndex;
+      const isBigBlind = playerIndex === this._bigBlindIndex;
       const hasNotBetOrPostedBlinds = playerBetSize < roundBigBlind;
-      const validRaiseOnTable = playerBetSize*2 <= biggestBet; // Players cannot re-raise if they haven't been raised by at least the minimum amount
+      // Amount the player has raised (above the blind).
+      const playerBetMinusBlinds = (this._roundOfBetting !== RoundOfBetting.PREFLOP) ? playerBetSize : 
+                         isBigBlind ? (playerBetSize - roundBigBlind) :
+                         isSmallBlind ? (playerBetSize - roundSmallBlind) : playerBetSize;
+      // Amount player is currently being raised by
+      const playerWasRaisedBy = biggestBet - playerBetMinusBlinds; 
+      const minRaise = this._bettingRound.minRaise();
+      // If player is being raised by at least the minimum, they can re-raise again (elsewise, a player shoved before matching the min raise)
+      const validRaiseOnTable = playerWasRaisedBy >= minRaise;
+      
       if (actions.canRaise && ( hasNotBetOrPostedBlinds || validRaiseOnTable ) ) {
         actionRange.action |= Action.RAISE;
       };
