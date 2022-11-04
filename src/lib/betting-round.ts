@@ -4,6 +4,8 @@ import { SeatIndex } from 'types/seat-index';
 import { Chips } from 'types/chips';
 import Round, { Action as RoundAction } from './round';
 import { SeatArray } from 'types/seat-array';
+import { Blinds } from 'types/blinds';
+import { RoundOfBetting } from './community-cards';
 
 export enum Action {
   LEAVE,
@@ -26,12 +28,16 @@ export default class BettingRound {
   private _round: Round;
   private _biggestBet: Chips;
   private _minRaise: Chips;
+  private _blinds: Blinds;
+  private _roundOfBetting: RoundOfBetting;
 
   constructor(
     players: SeatArray,
     nonFoldedPlayers: boolean[],
     firstToAct: SeatIndex,
     minRaise: Chips,
+    blinds: Blinds,
+    roundOfBetting: RoundOfBetting,
     biggestBet: Chips = 0
   ) {
     this._round = new Round(
@@ -42,6 +48,8 @@ export default class BettingRound {
     this._players = players;
     this._biggestBet = biggestBet;
     this._minRaise = minRaise;
+    this._blinds = blinds;
+    this._roundOfBetting = roundOfBetting;
 
     assert(
       firstToAct < players.length,

@@ -237,7 +237,9 @@ export default class Dealer {
         this._players.map((player) => !!player),
         firstAction,
         this._forcedBets.blinds.big,
-        this._forcedBets.blinds.big
+        this.blinds(),
+        this._roundOfBetting,
+        this._forcedBets.blinds.big,
       );
     }
     this._handInProgress = true;
@@ -298,7 +300,9 @@ export default class Dealer {
         [...this._players],
         nonFoldedPlayers,
         this.nextOrWrap(this._button),
-        this._forcedBets.blinds.big
+        this._forcedBets.blinds.big,
+        this.blinds(),
+        this._roundOfBetting,
       );
       this.dealCommunityCards();
       assert(this._bettingRoundsCompleted === false);
