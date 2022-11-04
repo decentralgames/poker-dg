@@ -154,8 +154,15 @@ export default class BettingRound {
   isRaiseValid(bet: Chips): boolean {
     const player = this._players[this._round.playerToAct()];
     assert(player !== null);
+
+    //In heads up preflop round, we need to check if the BB goes all-in
+    const bigBlindIsAllIn = ( this._players[this._blinds.big]?.stack() ?? 0 ) === 0; 
     const playerChips = player.stack() + player.betSize();
-    const minBet = this._biggestBet + this._minRaise;
+    //If BB is all-in, adjust the min-bet so that the SB is able to either call or check their all-in
+    const minBet = (this._roundOfBetting === RoundOfBetting.PREFLOP && this.numActivePlayers() === 2 && bigBlindIsAllIn) ?  
+                    this._players[this._blinds.big]?.betSize() ?? 0 : 
+                    this._biggestBet + this._minRaise;
+
     if (playerChips > this._biggestBet && playerChips < minBet) {
       return bet === playerChips;
     }
