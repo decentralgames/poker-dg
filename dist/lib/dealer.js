@@ -168,6 +168,11 @@ var Dealer = /** @class */ (function () {
             else {
                 actionRange.action |= Action.BET;
             }
+            //Following conditions make sure not to give "Call 0" for heads up scenario where BB is all-in preflop
+        }
+        else if (this.numActivePlayers() === 2 && biggestBet < this._forcedBets.blinds.big &&
+            playerBetSize === biggestBet && this._roundOfBetting === community_cards_1.RoundOfBetting.PREFLOP) {
+            actionRange.action |= Action.CHECK;
         }
         else {
             actionRange.action |= Action.CALL;
@@ -211,6 +216,7 @@ var Dealer = /** @class */ (function () {
         return this._holeCards;
     };
     Dealer.prototype.startHand = function () {
+        var _a, _b, _c, _d, _e, _f;
         (0, assert_1.default)(!this.handInProgress(), 'Hand must not be in progress');
         this._bettingRoundsCompleted = false;
         this._roundOfBetting = community_cards_1.RoundOfBetting.PREFLOP;
@@ -218,9 +224,12 @@ var Dealer = /** @class */ (function () {
         this.collectAnte();
         var firstAction = this.nextOrWrap(this.postBlinds());
         this.dealHoleCards();
-        if (this._players.filter(function (player) { return player !== null && player.stack() !== 0; })
-            .length > 1) {
-            this._bettingRound = new betting_round_1.default(__spreadArray([], this._players, true), this._players.map(function (player) { return !!player; }), firstAction, this._forcedBets.blinds.big, this._forcedBets.blinds.big);
+        var playersWithChips = this._players.filter(function (player) { return player !== null && player.stack() !== 0; });
+        var bigBlindIsAllIn = (_b = (((_a = this._players[this._bigBlindIndex]) === null || _a === void 0 ? void 0 : _a.stack()) === 0)) !== null && _b !== void 0 ? _b : 0;
+        var biggestBet = Math.max((_d = (_c = this._players[this._bigBlindIndex]) === null || _c === void 0 ? void 0 : _c.betSize()) !== null && _d !== void 0 ? _d : 0, (_f = (_e = this._players[this._smallBlindIndex]) === null || _e === void 0 ? void 0 : _e.betSize()) !== null && _f !== void 0 ? _f : 0);
+        //If the big blind goes all-in, and there is 1 other player left, we still need to trigger the betting round
+        if (playersWithChips.length > 1 || playersWithChips.length === 1 && bigBlindIsAllIn) {
+            this._bettingRound = new betting_round_1.default(__spreadArray([], this._players, true), this._players.map(function (player) { return !!player; }), firstAction, this._forcedBets.blinds.big, this.blinds(), this._roundOfBetting, bigBlindIsAllIn ? biggestBet : this._forcedBets.blinds.big);
         }
         this._handInProgress = true;
     };
@@ -269,7 +278,7 @@ var Dealer = /** @class */ (function () {
             this._roundOfBetting = (0, community_cards_1.next)(this._roundOfBetting);
             this._players = (_d = (_c = this._bettingRound) === null || _c === void 0 ? void 0 : _c.players()) !== null && _d !== void 0 ? _d : [];
             var nonFoldedPlayers = (_f = (_e = this._bettingRound) === null || _e === void 0 ? void 0 : _e.nonFoldedPlayers()) !== null && _f !== void 0 ? _f : [];
-            this._bettingRound = new betting_round_1.default(__spreadArray([], this._players, true), nonFoldedPlayers, this.nextOrWrap(this._button), this._forcedBets.blinds.big);
+            this._bettingRound = new betting_round_1.default(__spreadArray([], this._players, true), nonFoldedPlayers, this.nextOrWrap(this._button), this._forcedBets.blinds.big, this.blinds(), this._roundOfBetting);
             this.dealCommunityCards();
             (0, assert_1.default)(this._bettingRoundsCompleted === false);
         }

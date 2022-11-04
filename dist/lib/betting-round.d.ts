@@ -2,6 +2,8 @@ import ChipRange from './chip-range';
 import { SeatIndex } from 'types/seat-index';
 import { Chips } from 'types/chips';
 import { SeatArray } from 'types/seat-array';
+import { Blinds } from 'types/blinds';
+import { RoundOfBetting } from './community-cards';
 export declare enum Action {
     LEAVE = 0,
     MATCH = 1,
@@ -17,7 +19,9 @@ export default class BettingRound {
     private _round;
     private _biggestBet;
     private _minRaise;
-    constructor(players: SeatArray, nonFoldedPlayers: boolean[], firstToAct: SeatIndex, minRaise: Chips, biggestBet?: Chips);
+    private _blinds;
+    private _roundOfBetting;
+    constructor(players: SeatArray, nonFoldedPlayers: boolean[], firstToAct: SeatIndex, minRaise: Chips, blinds: Blinds, roundOfBetting: RoundOfBetting, biggestBet?: Chips);
     inProgress(): boolean;
     isContested(): boolean;
     playerToAct(): SeatIndex;

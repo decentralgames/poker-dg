@@ -30,6 +30,7 @@ exports.ActionRange = exports.Action = void 0;
 var assert_1 = __importDefault(require("assert"));
 var chip_range_1 = __importDefault(require("./chip-range"));
 var round_1 = __importStar(require("./round"));
+var community_cards_1 = require("./community-cards");
 var Action;
 (function (Action) {
     Action[Action["LEAVE"] = 0] = "LEAVE";
@@ -46,12 +47,14 @@ var ActionRange = /** @class */ (function () {
 }());
 exports.ActionRange = ActionRange;
 var BettingRound = /** @class */ (function () {
-    function BettingRound(players, nonFoldedPlayers, firstToAct, minRaise, biggestBet) {
+    function BettingRound(players, nonFoldedPlayers, firstToAct, minRaise, blinds, roundOfBetting, biggestBet) {
         if (biggestBet === void 0) { biggestBet = 0; }
         this._round = new round_1.default(players.map(function (player) { return !!player; }), nonFoldedPlayers, firstToAct);
         this._players = players;
         this._biggestBet = biggestBet;
         this._minRaise = minRaise;
+        this._blinds = blinds;
+        this._roundOfBetting = roundOfBetting;
         (0, assert_1.default)(firstToAct < players.length, 'Seat index must be in the valid range');
         (0, assert_1.default)(players[firstToAct], 'First player to act must exist');
     }
@@ -137,10 +140,16 @@ var BettingRound = /** @class */ (function () {
         this._round.standUp(seat);
     };
     BettingRound.prototype.isRaiseValid = function (bet) {
+        var _a, _b, _c, _d;
         var player = this._players[this._round.playerToAct()];
         (0, assert_1.default)(player !== null);
+        //In heads up preflop round, we need to check if the BB goes all-in
+        var bigBlindIsAllIn = ((_b = (_a = this._players[this._blinds.big]) === null || _a === void 0 ? void 0 : _a.stack()) !== null && _b !== void 0 ? _b : 0) === 0;
         var playerChips = player.stack() + player.betSize();
-        var minBet = this._biggestBet + this._minRaise;
+        //If BB is all-in, adjust the min-bet so that the SB is able to either call or check their all-in
+        var minBet = (this._roundOfBetting === community_cards_1.RoundOfBetting.PREFLOP && this.numActivePlayers() === 2 && bigBlindIsAllIn) ?
+            (_d = (_c = this._players[this._blinds.big]) === null || _c === void 0 ? void 0 : _c.betSize()) !== null && _d !== void 0 ? _d : 0 :
+            this._biggestBet + this._minRaise;
         if (playerChips > this._biggestBet && playerChips < minBet) {
             return bet === playerChips;
         }
