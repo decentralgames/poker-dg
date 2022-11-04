@@ -168,7 +168,12 @@ export default class Dealer {
         actionRange.action |= Action.RAISE;
       } else {
         actionRange.action |= Action.BET;
-      }
+      } 
+      //Following conditions make sure not to give "Call 0" for heads up scenario where BB is all-in preflop
+    } else if ( this.numActivePlayers() === 2 && biggestBet < this._forcedBets.blinds.big && 
+                playerBetSize === biggestBet && this._roundOfBetting === RoundOfBetting.PREFLOP ) 
+              {
+                actionRange.action |= Action.CHECK;
     } else {
       actionRange.action |= Action.CALL;
 
@@ -228,16 +233,22 @@ export default class Dealer {
     this.collectAnte();
     const firstAction = this.nextOrWrap(this.postBlinds());
     this.dealHoleCards();
+
+    const playersWithChips = this._players.filter((player) => player !== null && player.stack() !== 0);
+    const bigBlindIsAllIn =  ( this._players[this._bigBlindIndex]?.stack() === 0 ) ?? 0; 
+    const biggestBet = Math.max(this._players[this._bigBlindIndex]?.betSize() ?? 0, this._players[this._smallBlindIndex]?.betSize() ?? 0);
+    //If the big blind goes all-in, and there is 1 other player left, we still need to trigger the betting round
     if (
-      this._players.filter((player) => player !== null && player.stack() !== 0)
-        .length > 1
+        playersWithChips.length > 1 || playersWithChips.length === 1 && bigBlindIsAllIn
     ) {
       this._bettingRound = new BettingRound(
         [...this._players],
         this._players.map((player) => !!player),
         firstAction,
         this._forcedBets.blinds.big,
-        this._forcedBets.blinds.big
+        this.blinds(),
+        this._roundOfBetting,
+        bigBlindIsAllIn ? biggestBet : this._forcedBets.blinds.big,
       );
     }
     this._handInProgress = true;
@@ -298,7 +309,9 @@ export default class Dealer {
         [...this._players],
         nonFoldedPlayers,
         this.nextOrWrap(this._button),
-        this._forcedBets.blinds.big
+        this._forcedBets.blinds.big,
+        this.blinds(),
+        this._roundOfBetting,
       );
       this.dealCommunityCards();
       assert(this._bettingRoundsCompleted === false);

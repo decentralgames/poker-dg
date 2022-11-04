@@ -4,6 +4,8 @@ import { SeatIndex } from 'types/seat-index';
 import { Chips } from 'types/chips';
 import Round, { Action as RoundAction } from './round';
 import { SeatArray } from 'types/seat-array';
+import { Blinds } from 'types/blinds';
+import { RoundOfBetting } from './community-cards';
 
 export enum Action {
   LEAVE,
@@ -26,12 +28,16 @@ export default class BettingRound {
   private _round: Round;
   private _biggestBet: Chips;
   private _minRaise: Chips;
+  private _blinds: Blinds;
+  private _roundOfBetting: RoundOfBetting;
 
   constructor(
     players: SeatArray,
     nonFoldedPlayers: boolean[],
     firstToAct: SeatIndex,
     minRaise: Chips,
+    blinds: Blinds,
+    roundOfBetting: RoundOfBetting,
     biggestBet: Chips = 0
   ) {
     this._round = new Round(
@@ -42,6 +48,8 @@ export default class BettingRound {
     this._players = players;
     this._biggestBet = biggestBet;
     this._minRaise = minRaise;
+    this._blinds = blinds;
+    this._roundOfBetting = roundOfBetting;
 
     assert(
       firstToAct < players.length,
@@ -146,8 +154,15 @@ export default class BettingRound {
   isRaiseValid(bet: Chips): boolean {
     const player = this._players[this._round.playerToAct()];
     assert(player !== null);
+
+    //In heads up preflop round, we need to check if the BB goes all-in
+    const bigBlindIsAllIn = ( this._players[this._blinds.big]?.stack() ?? 0 ) === 0; 
     const playerChips = player.stack() + player.betSize();
-    const minBet = this._biggestBet + this._minRaise;
+    //If BB is all-in, adjust the min-bet so that the SB is able to either call or check their all-in
+    const minBet = (this._roundOfBetting === RoundOfBetting.PREFLOP && this.numActivePlayers() === 2 && bigBlindIsAllIn) ?  
+                    this._players[this._blinds.big]?.betSize() ?? 0 : 
+                    this._biggestBet + this._minRaise;
+
     if (playerChips > this._biggestBet && playerChips < minBet) {
       return bet === playerChips;
     }
