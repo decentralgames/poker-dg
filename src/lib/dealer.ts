@@ -168,7 +168,12 @@ export default class Dealer {
         actionRange.action |= Action.RAISE;
       } else {
         actionRange.action |= Action.BET;
-      }
+      } 
+      //Following conditions make sure not to give "Call 0" for heads up scenario where BB is all-in preflop
+    } else if ( this.numActivePlayers() === 2 && biggestBet < this._forcedBets.blinds.big && 
+                playerBetSize === biggestBet && this._roundOfBetting === RoundOfBetting.PREFLOP ) 
+              {
+                actionRange.action |= Action.CHECK;
     } else {
       actionRange.action |= Action.CALL;
 
