@@ -228,9 +228,13 @@ export default class Dealer {
     this.collectAnte();
     const firstAction = this.nextOrWrap(this.postBlinds());
     this.dealHoleCards();
+
+    const playersWithChips = this._players.filter((player) => player !== null && player.stack() !== 0);
+    const bigBlindIsAllIn =  ( this._players[this._bigBlindIndex]?.stack() === 0 ) ?? 0; 
+    const biggestBet = Math.max(this._players[this._bigBlindIndex]?.betSize() ?? 0, this._players[this._smallBlindIndex]?.betSize() ?? 0);
+    //If the big blind goes all-in, and there is 1 other player left, we still need to trigger the betting round
     if (
-      this._players.filter((player) => player !== null && player.stack() !== 0)
-        .length > 1
+        playersWithChips.length > 1 || playersWithChips.length === 1 && bigBlindIsAllIn
     ) {
       this._bettingRound = new BettingRound(
         [...this._players],
@@ -239,7 +243,7 @@ export default class Dealer {
         this._forcedBets.blinds.big,
         this.blinds(),
         this._roundOfBetting,
-        this._forcedBets.blinds.big,
+        bigBlindIsAllIn ? biggestBet : this._forcedBets.blinds.big,
       );
     }
     this._handInProgress = true;
