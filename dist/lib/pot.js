@@ -19,7 +19,7 @@ var Pot = /** @class */ (function () {
         this._eligiblePlayers = this._eligiblePlayers.filter(function (index) { return index != player; });
     };
     Pot.prototype.add = function (amount) {
-        (0, assert_1.default)(amount >= 0, 'Cannot add a negative amount to the pot');
+        assert_1.default(amount >= 0, 'Cannot add a negative amount to the pot');
         this._size += amount;
     };
     Pot.prototype.collectBetsFrom = function (players) {
@@ -40,7 +40,7 @@ var Pot = /** @class */ (function () {
         else {
             // Find the smallest player bet on the table.
             var firstBetter = players[firstBetterIndex];
-            (0, assert_1.default)(firstBetter !== null);
+            assert_1.default(firstBetter !== null);
             var minBet_1 = players
                 .slice(firstBetterIndex + 1)
                 .reduce(function (acc, player) {

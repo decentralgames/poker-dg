@@ -9,7 +9,7 @@ var Player = /** @class */ (function () {
     function Player(arg) {
         this._total = 0;
         this._betSize = 0;
-        if ((0, chips_1.isChips)(arg)) {
+        if (chips_1.isChips(arg)) {
             this._total = arg;
         }
         else if (arg instanceof Player) {
@@ -36,12 +36,12 @@ var Player = /** @class */ (function () {
         this._total -= amount;
     };
     Player.prototype.bet = function (amount) {
-        (0, assert_1.default)(amount <= this._total, 'Player cannot bet more than he/she has');
-        (0, assert_1.default)(amount >= this._betSize, 'Player must bet more than he/she has previously');
+        assert_1.default(amount <= this._total, 'Player cannot bet more than he/she has');
+        assert_1.default(amount >= this._betSize, 'Player must bet more than he/she has previously');
         this._betSize = amount;
     };
     Player.prototype.takeFromBet = function (amount) {
-        (0, assert_1.default)(amount <= this._betSize, 'Cannot take from bet more than is there');
+        assert_1.default(amount <= this._betSize, 'Cannot take from bet more than is there');
         this._total -= amount;
         this._betSize -= amount;
     };

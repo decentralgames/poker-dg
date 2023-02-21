@@ -1,11 +1,7 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -55,8 +51,8 @@ var BettingRound = /** @class */ (function () {
         this._minRaise = minRaise;
         this._blinds = blinds;
         this._roundOfBetting = roundOfBetting;
-        (0, assert_1.default)(firstToAct < players.length, 'Seat index must be in the valid range');
-        (0, assert_1.default)(players[firstToAct], 'First player to act must exist');
+        assert_1.default(firstToAct < players.length, 'Seat index must be in the valid range');
+        assert_1.default(players[firstToAct], 'First player to act must exist');
     }
     BettingRound.prototype.inProgress = function () {
         return this._round.inProgress();
@@ -93,7 +89,7 @@ var BettingRound = /** @class */ (function () {
     };
     BettingRound.prototype.legalActions = function () {
         var player = this._players[this._round.playerToAct()];
-        (0, assert_1.default)(player !== null);
+        assert_1.default(player !== null);
         var playerChips = player.totalChips();
         var canRaise = playerChips >= this._biggestBet;
         if (canRaise) {
@@ -108,9 +104,9 @@ var BettingRound = /** @class */ (function () {
     BettingRound.prototype.actionTaken = function (action, bet) {
         if (bet === void 0) { bet = 0; }
         var player = this._players[this._round.playerToAct()];
-        (0, assert_1.default)(player !== null);
+        assert_1.default(player !== null);
         if (action === Action.RAISE) {
-            (0, assert_1.default)(this.isRaiseValid(bet));
+            assert_1.default(this.isRaiseValid(bet));
             player.bet(bet);
             // update min raise only if player does not shove before matching current raise
             var playerRaise = bet - this._biggestBet;
@@ -131,7 +127,7 @@ var BettingRound = /** @class */ (function () {
             this._round.actionTaken(actionFlag);
         }
         else {
-            (0, assert_1.default)(action === Action.LEAVE);
+            assert_1.default(action === Action.LEAVE);
             this._round.actionTaken(round_1.Action.LEAVE, true);
         }
     };
@@ -142,7 +138,7 @@ var BettingRound = /** @class */ (function () {
     BettingRound.prototype.isRaiseValid = function (bet) {
         var _a, _b, _c, _d;
         var player = this._players[this._round.playerToAct()];
-        (0, assert_1.default)(player !== null);
+        assert_1.default(player !== null);
         //In heads up preflop round, we need to check if the BB goes all-in
         var bigBlindIsAllIn = ((_b = (_a = this._players[this._blinds.big]) === null || _a === void 0 ? void 0 : _a.stack()) !== null && _b !== void 0 ? _b : 0) === 0;
         var playerChips = player.stack() + player.betSize();
