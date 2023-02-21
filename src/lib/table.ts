@@ -307,16 +307,13 @@ export default class Table {
     const player = this._tablePlayers[seat];
     assert(player !== null);
     const betSize = player.betSize();
-    const totalChips = player.totalChips();
     let legalActions = AutomaticAction.CHECK_FOLD | AutomaticAction.ALL_IN;
     const canCheck = biggestBet - betSize === 0;
     if (!canCheck) {
       legalActions |= AutomaticAction.CALL;
     }
 
-    if (biggestBet < totalChips) {
-      legalActions |= AutomaticAction.CALL_ANY;
-    }
+    legalActions |= AutomaticAction.CALL_ANY;
 
     return legalActions;
   }
