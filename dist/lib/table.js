@@ -242,15 +242,12 @@ var Table = /** @class */ (function () {
         var player = this._tablePlayers[seat];
         (0, assert_1.default)(player !== null);
         var betSize = player.betSize();
-        var totalChips = player.totalChips();
         var legalActions = AutomaticAction.CHECK_FOLD | AutomaticAction.ALL_IN;
         var canCheck = biggestBet - betSize === 0;
         if (!canCheck) {
             legalActions |= AutomaticAction.CALL;
         }
-        if (biggestBet < totalChips) {
-            legalActions |= AutomaticAction.CALL_ANY;
-        }
+        legalActions |= AutomaticAction.CALL_ANY;
         return legalActions;
     };
     Table.prototype.setAutomaticAction = function (seat, action) {
