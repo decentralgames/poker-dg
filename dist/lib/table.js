@@ -268,7 +268,7 @@ var Table = /** @class */ (function () {
         this._staged[seat] = true;
     };
     Table.prototype.standUp = function (seat) {
-        var _a;
+        var _a, _b;
         (0, assert_1.default)(seat < this._numSeats && seat >= 0, 'Given seat index must be valid');
         (0, assert_1.default)(this._tablePlayers[seat] !== null, 'Given seat must be occupied');
         if (this.handInProgress() && this.bettingRoundInProgress()) {
@@ -283,6 +283,10 @@ var Table = /** @class */ (function () {
         }
         else {
             this._tablePlayers[seat] = null;
+            if (this._handPlayers) {
+                this._handPlayers[seat] = null;
+                (_b = this._dealer) === null || _b === void 0 ? void 0 : _b.standUp(seat);
+            }
         }
     };
     Table.prototype.isRaiseValid = function (bet) {

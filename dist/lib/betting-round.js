@@ -97,7 +97,10 @@ var BettingRound = /** @class */ (function () {
         var playerChips = player.totalChips();
         var canRaise = playerChips >= this._biggestBet;
         if (canRaise) {
-            var minBet = this._biggestBet + this._minRaise;
+            var minBet = (this._roundOfBetting === community_cards_1.RoundOfBetting.PREFLOP && this._biggestBet < this._minRaise) ?
+                this._minRaise :
+                this._biggestBet + this._minRaise;
+            console.log("Hand minimum bet is", minBet);
             var raiseRange = new chip_range_1.default(Math.min(minBet, playerChips), playerChips);
             return new ActionRange(canRaise, raiseRange);
         }
@@ -149,7 +152,9 @@ var BettingRound = /** @class */ (function () {
         //If BB is all-in, adjust the min-bet so that the SB is able to either call or check their all-in
         var minBet = (this._roundOfBetting === community_cards_1.RoundOfBetting.PREFLOP && this.numActivePlayers() === 2 && bigBlindIsAllIn) ?
             (_d = (_c = this._players[this._blinds.big]) === null || _c === void 0 ? void 0 : _c.betSize()) !== null && _d !== void 0 ? _d : 0 :
-            this._biggestBet + this._minRaise;
+            (this._roundOfBetting === community_cards_1.RoundOfBetting.PREFLOP && bigBlindIsAllIn && this._biggestBet < this._minRaise) ?
+                this._minRaise :
+                this._biggestBet + this._minRaise;
         if (playerChips > this._biggestBet && playerChips < minBet) {
             return bet === playerChips;
         }
