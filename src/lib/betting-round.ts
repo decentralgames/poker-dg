@@ -107,7 +107,10 @@ export default class BettingRound {
     
     const canRaise = playerChips >= this._biggestBet;
     if (canRaise) {
-      const minBet = this._biggestBet + this._minRaise;
+      const minBet = (this._roundOfBetting === RoundOfBetting.PREFLOP && this._biggestBet < this._minRaise) ? 
+                      this._minRaise : 
+                      this._biggestBet + this._minRaise;
+
       const raiseRange = new ChipRange(
         Math.min(minBet, playerChips),
         playerChips
@@ -161,6 +164,10 @@ export default class BettingRound {
     //If BB is all-in, adjust the min-bet so that the SB is able to either call or check their all-in
     const minBet = (this._roundOfBetting === RoundOfBetting.PREFLOP && this.numActivePlayers() === 2 && bigBlindIsAllIn) ?  
                     this._players[this._blinds.big]?.betSize() ?? 0 : 
+                    //Case of BB all-in with more than 1 other player remaining
+                    (this._roundOfBetting === RoundOfBetting.PREFLOP && bigBlindIsAllIn && this._biggestBet < this._minRaise) ? 
+                    this._minRaise : 
+                    //Case of normal gameplay
                     this._biggestBet + this._minRaise;
 
     if (playerChips > this._biggestBet && playerChips < minBet) {

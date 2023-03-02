@@ -29,7 +29,7 @@ var CommunityCards = /** @class */ (function () {
         return this._cards;
     };
     CommunityCards.prototype.deal = function (cards) {
-        assert_1.default(cards.length <= 5 - this._cards.length, 'Cannot deal more than there is undealt cards');
+        (0, assert_1.default)(cards.length <= 5 - this._cards.length, 'Cannot deal more than there is undealt cards');
         this._cards = this._cards.concat(cards);
     };
     return CommunityCards;

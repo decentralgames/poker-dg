@@ -372,6 +372,10 @@ export default class Table {
       this._dealer?.standUp(seat);
     } else {
       this._tablePlayers[seat] = null;
+      if(this._handPlayers) {
+        this._handPlayers[seat] = null;
+        this._dealer?.standUp(seat);
+      }
     }
   }
 
