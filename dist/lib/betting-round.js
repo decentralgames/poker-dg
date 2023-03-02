@@ -151,8 +151,10 @@ var BettingRound = /** @class */ (function () {
         //If BB is all-in, adjust the min-bet so that the SB is able to either call or check their all-in
         var minBet = (this._roundOfBetting === community_cards_1.RoundOfBetting.PREFLOP && this.numActivePlayers() === 2 && bigBlindIsAllIn) ?
             (_d = (_c = this._players[this._blinds.big]) === null || _c === void 0 ? void 0 : _c.betSize()) !== null && _d !== void 0 ? _d : 0 :
+            //Case of BB all-in with more than 1 other player remaining
             (this._roundOfBetting === community_cards_1.RoundOfBetting.PREFLOP && bigBlindIsAllIn && this._biggestBet < this._minRaise) ?
                 this._minRaise :
+                //Case of normal gameplay
                 this._biggestBet + this._minRaise;
         if (playerChips > this._biggestBet && playerChips < minBet) {
             return bet === playerChips;
