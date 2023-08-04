@@ -7,6 +7,7 @@ import Player from './player';
 export default class Pot {
   private _eligiblePlayers: SeatIndex[] = [];
   private _size: Chips = 0;
+  private _numberPlayersWithNonZeroBet: number = 0;
 
   size(): Chips {
     return this._size;
@@ -29,6 +30,8 @@ export default class Pot {
 
   collectBetsFrom(players: SeatArray): Chips {
     // Find the first player who has placed a bet.
+    this._numberPlayersWithNonZeroBet = 0;
+
     const firstBetterIndex = players.findIndex(
       (player) => player?.betSize() ?? 0 !== 0
     );
@@ -65,13 +68,19 @@ export default class Pot {
       this._eligiblePlayers = [];
       players.forEach((player, index) => {
         if (player !== null && player.betSize() !== 0) {
+          this._numberPlayersWithNonZeroBet ++ ;
           player.takeFromBet(minBet);
           this._size += minBet;
+          
           this._eligiblePlayers.push(index);
         }
       });
 
       return minBet;
     }
+  }
+
+  totalNumberOfBets(): number {
+    return this._numberPlayersWithNonZeroBet;
   }
 }

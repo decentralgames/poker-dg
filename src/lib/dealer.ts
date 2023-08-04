@@ -230,6 +230,7 @@ export default class Dealer {
     this._bettingRoundsCompleted = false;
     this._roundOfBetting = RoundOfBetting.PREFLOP;
     this._winners = [];
+    this._potManager.resetFoldCount();
     this.collectAnte();
     const firstAction = this.nextOrWrap(this.postBlinds());
     this.dealHoleCards();

@@ -8,6 +8,7 @@ var Pot = /** @class */ (function () {
     function Pot() {
         this._eligiblePlayers = [];
         this._size = 0;
+        this._numberPlayersWithNonZeroBet = 0;
     }
     Pot.prototype.size = function () {
         return this._size;
@@ -25,6 +26,7 @@ var Pot = /** @class */ (function () {
     Pot.prototype.collectBetsFrom = function (players) {
         var _this = this;
         // Find the first player who has placed a bet.
+        this._numberPlayersWithNonZeroBet = 0;
         var firstBetterIndex = players.findIndex(function (player) { var _a; return (_a = player === null || player === void 0 ? void 0 : player.betSize()) !== null && _a !== void 0 ? _a : 0 !== 0; });
         if (firstBetterIndex === -1) {
             // If no players have bet, just make all the players who are still in the pot eligible.
@@ -54,6 +56,7 @@ var Pot = /** @class */ (function () {
             this._eligiblePlayers = [];
             players.forEach(function (player, index) {
                 if (player !== null && player.betSize() !== 0) {
+                    _this._numberPlayersWithNonZeroBet++;
                     player.takeFromBet(minBet_1);
                     _this._size += minBet_1;
                     _this._eligiblePlayers.push(index);
@@ -61,6 +64,9 @@ var Pot = /** @class */ (function () {
             });
             return minBet_1;
         }
+    };
+    Pot.prototype.totalNumberOfBets = function () {
+        return this._numberPlayersWithNonZeroBet;
     };
     return Pot;
 }());

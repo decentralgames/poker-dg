@@ -221,6 +221,7 @@ var Dealer = /** @class */ (function () {
         this._bettingRoundsCompleted = false;
         this._roundOfBetting = community_cards_1.RoundOfBetting.PREFLOP;
         this._winners = [];
+        this._potManager.resetFoldCount();
         this.collectAnte();
         var firstAction = this.nextOrWrap(this.postBlinds());
         this.dealHoleCards();
