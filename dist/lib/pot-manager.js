@@ -7,6 +7,7 @@ var pot_1 = __importDefault(require("./pot"));
 var PotManager = /** @class */ (function () {
     function PotManager() {
         this._aggregateFoldedBets = 0;
+        this._numFoldedPlayersWithNonZeroBet = 0;
         this._pots = [new pot_1.default()];
     }
     PotManager.prototype.pots = function () {
@@ -14,6 +15,12 @@ var PotManager = /** @class */ (function () {
     };
     PotManager.prototype.betFolded = function (amount) {
         this._aggregateFoldedBets += amount;
+        if (amount > 0) {
+            this._numFoldedPlayersWithNonZeroBet++;
+        }
+    };
+    PotManager.prototype.resetFoldCount = function () {
+        this._numFoldedPlayersWithNonZeroBet = 0;
     };
     PotManager.prototype.removePlayerFromPots = function (player) {
         this._pots.forEach(function (pot) { return pot.removePlayer(player); });
@@ -31,7 +38,9 @@ var PotManager = /** @class */ (function () {
             // Logic: If 'x' is chips which a player committed to the pot and 'n' is number of (eligible) players in that pot,
             // a player can win exactly x*n chips (from that particular pot).
             var numberOfEligiblePlayers = this._pots[this._pots.length - 1].eligiblePlayers().length;
-            var aggregateFoldedBetsConsumedAmount = Math.min(this._aggregateFoldedBets, numberOfEligiblePlayers * minBet);
+            var numberOfBets = this._pots[this._pots.length - 1].totalNumberOfBets();
+            var numberOfFoldedPlayersThatPlacedBetForPot = numberOfBets + this._numFoldedPlayersWithNonZeroBet - numberOfEligiblePlayers;
+            var aggregateFoldedBetsConsumedAmount = Math.min(this._aggregateFoldedBets, numberOfFoldedPlayersThatPlacedBetForPot * minBet);
             this._pots[this._pots.length - 1].add(aggregateFoldedBetsConsumedAmount);
             this._aggregateFoldedBets -= aggregateFoldedBetsConsumedAmount;
             if (players.filter(function (player) { return player !== null && player.betSize() !== 0; })

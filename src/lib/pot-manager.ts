@@ -5,6 +5,7 @@ import { SeatArray } from 'types/seat-array';
 export default class PotManager {
   private readonly _pots: Pot[];
   private _aggregateFoldedBets: Chips = 0;
+  private _numFoldedPlayersWithNonZeroBet: number = 0;
 
   constructor() {
     this._pots = [new Pot()];
@@ -16,6 +17,13 @@ export default class PotManager {
 
   betFolded(amount): void {
     this._aggregateFoldedBets += amount;
+    if(amount > 0){
+      this._numFoldedPlayersWithNonZeroBet ++ ;
+    }
+  }
+
+  resetFoldCount(): void {
+    this._numFoldedPlayersWithNonZeroBet = 0;
   }
 
   removePlayerFromPots(player: number): void {
@@ -39,13 +47,16 @@ export default class PotManager {
       // a player can win exactly x*n chips (from that particular pot).
       const numberOfEligiblePlayers =
         this._pots[this._pots.length - 1].eligiblePlayers().length;
+
+      const numberOfBets = this._pots[this._pots.length - 1].totalNumberOfBets();
+      const numberOfFoldedPlayersThatPlacedBetForPot = numberOfBets + this._numFoldedPlayersWithNonZeroBet - numberOfEligiblePlayers;
+
       const aggregateFoldedBetsConsumedAmount = Math.min(
         this._aggregateFoldedBets,
-        numberOfEligiblePlayers * minBet
+        numberOfFoldedPlayersThatPlacedBetForPot * minBet
       );
       this._pots[this._pots.length - 1].add(aggregateFoldedBetsConsumedAmount);
       this._aggregateFoldedBets -= aggregateFoldedBetsConsumedAmount;
-
       if (
         players.filter((player) => player !== null && player.betSize() !== 0)
           .length ||
