@@ -131,6 +131,7 @@ var Poker = /** @class */ (function () {
         return this._table.pots().map(function (pot) { return ({
             size: pot.size(),
             eligiblePlayers: pot.eligiblePlayers(),
+            rake: pot.rake()
         }); });
     };
     Poker.prototype.forcedBets = function () {
@@ -144,6 +145,9 @@ var Poker = /** @class */ (function () {
     Poker.prototype.setForcedBets = function (forcedBets) {
         var ante = forcedBets.ante, big = forcedBets.bigBlind, small = forcedBets.smallBlind;
         this._table.setForcedBets({ ante: ante, blinds: { small: small, big: big } });
+    };
+    Poker.prototype.setRake = function (rakeEnabled, rakeSettings) {
+        this._table.setRake(rakeEnabled, rakeSettings);
     };
     Poker.prototype.numSeats = function () {
         return this._table.numSeats();

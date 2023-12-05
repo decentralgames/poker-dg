@@ -3,7 +3,7 @@ import { SeatIndex } from 'types/seat-index';
 import { ForcedBets } from 'types/forced-bets';
 import Deck from './deck';
 import CommunityCards, { RoundOfBetting } from './community-cards';
-import Dealer, { Action, ActionRange } from './dealer';
+import Dealer, { Action, ActionRange, RakeSettings } from './dealer';
 import assert from 'assert';
 import Pot from './pot';
 import { HoleCards } from 'types/hole-cards';
@@ -35,6 +35,8 @@ export default class Table {
   private _communityCards?: CommunityCards;
   private _dealer?: Dealer;
   private _staged: boolean[]; // All players who took a seat or stood up before the .start_hand()
+  private _rakeEnabled: boolean = false; 
+  private _rakeSettings: RakeSettings = {maxRake: 0, rakePercentage: 0};
 
   constructor(forcedBets: ForcedBets, numSeats = 9) {
     assert(numSeats <= 23, 'Maximum 23 players');
@@ -44,6 +46,7 @@ export default class Table {
     this._tablePlayers = new Array(numSeats).fill(null);
     this._staged = new Array(numSeats).fill(false);
     this._deck = new Deck();
+
   }
 
   playerToAct(): SeatIndex {
@@ -100,7 +103,7 @@ export default class Table {
   }
 
   pots(): Pot[] {
-    assert(this.handInProgress(), 'Hand must be in progress');
+    //assert(this.handInProgress(), 'Hand must be in progress');
     assert(this._dealer !== undefined);
 
     return this._dealer.pots();
@@ -114,6 +117,11 @@ export default class Table {
     assert(!this.handInProgress(), 'Hand must not be in progress');
 
     this._forcedBets = forcedBets;
+  }
+
+  setRake(rakeEnabled: boolean, rakeSettings: RakeSettings): void {
+    this._rakeEnabled = rakeEnabled;
+    this._rakeSettings = rakeSettings;
   }
 
   numSeats(): number {
@@ -145,7 +153,10 @@ export default class Table {
       this._button,
       this._forcedBets,
       this._deck,
-      this._communityCards
+      this._communityCards,
+      undefined,
+      this._rakeEnabled,
+      this._rakeSettings,
     );
     this._dealer.startHand();
     this.updateTablePlayers();

@@ -1,3 +1,4 @@
+import { RakeSettings } from '../lib/dealer';
 import ChipRange from '../lib/chip-range';
 import { SeatIndex } from 'types/seat-index';
 import { HandRanking } from '../lib/hand';
@@ -46,6 +47,7 @@ export default class Poker {
         bigBlind: number;
         smallBlind: number;
     }): void;
+    setRake(rakeEnabled: boolean, rakeSettings: RakeSettings): void;
     numSeats(): number;
     startHand(): void;
     isHandInProgress(): boolean;

@@ -48,6 +48,8 @@ var Table = /** @class */ (function () {
         this._firstTimeButton = true;
         this._buttonSetManually = false; // has the button been set manually
         this._button = 0;
+        this._rakeEnabled = false;
+        this._rakeSettings = { maxRake: 0, rakePercentage: 0 };
         (0, assert_1.default)(numSeats <= 23, 'Maximum 23 players');
         this._numSeats = numSeats;
         this._forcedBets = forcedBets;
@@ -94,7 +96,7 @@ var Table = /** @class */ (function () {
         return this._dealer.numActivePlayers();
     };
     Table.prototype.pots = function () {
-        (0, assert_1.default)(this.handInProgress(), 'Hand must be in progress');
+        //assert(this.handInProgress(), 'Hand must be in progress');
         (0, assert_1.default)(this._dealer !== undefined);
         return this._dealer.pots();
     };
@@ -104,6 +106,10 @@ var Table = /** @class */ (function () {
     Table.prototype.setForcedBets = function (forcedBets) {
         (0, assert_1.default)(!this.handInProgress(), 'Hand must not be in progress');
         this._forcedBets = forcedBets;
+    };
+    Table.prototype.setRake = function (rakeEnabled, rakeSettings) {
+        this._rakeEnabled = rakeEnabled;
+        this._rakeSettings = rakeSettings;
     };
     Table.prototype.numSeats = function () {
         return this._numSeats;
@@ -123,7 +129,7 @@ var Table = /** @class */ (function () {
         this.incrementButton();
         this._deck.fillAndShuffle();
         this._communityCards = new community_cards_1.default();
-        this._dealer = new dealer_1.default(this._handPlayers, this._button, this._forcedBets, this._deck, this._communityCards);
+        this._dealer = new dealer_1.default(this._handPlayers, this._button, this._forcedBets, this._deck, this._communityCards, undefined, this._rakeEnabled, this._rakeSettings);
         this._dealer.startHand();
         this.updateTablePlayers();
     };

@@ -4,10 +4,18 @@ import { Chips } from 'types/chips';
 import { SeatArray } from 'types/seat-array';
 import Player from './player';
 
+
+export interface RakeInfo {
+  totalRake: number;
+  rakePerPlayer: {[key: number]: number}
+}
 export default class Pot {
   private _eligiblePlayers: SeatIndex[] = [];
   private _size: Chips = 0;
+  private _aggregateFoldedAmountAdded: number = 0;
   private _numberPlayersWithNonZeroBet: number = 0;
+  private _uncalledChips: number = 0;
+  private _rakeInfo: RakeInfo = {totalRake: 0, rakePerPlayer:{}};
 
   size(): Chips {
     return this._size;
@@ -23,9 +31,12 @@ export default class Pot {
     );
   }
 
-  add(amount: Chips): void {
+  add(amount: Chips, isFoldedBet: boolean = false): void {
     assert(amount >= 0, 'Cannot add a negative amount to the pot');
     this._size += amount;
+    if(isFoldedBet){
+      this._aggregateFoldedAmountAdded += amount;
+    }
   }
 
   collectBetsFrom(players: SeatArray): Chips {
@@ -64,17 +75,22 @@ export default class Pot {
           return acc;
         }, firstBetter.betSize());
 
-      // Deduct that bet from all the players, and add it to the pot.
-      this._eligiblePlayers = [];
+      let numberOfPlayersWithBet = 0
       players.forEach((player, index) => {
         if (player !== null && player.betSize() !== 0) {
           this._numberPlayersWithNonZeroBet ++ ;
           player.takeFromBet(minBet);
           this._size += minBet;
-          
-          this._eligiblePlayers.push(index);
+          numberOfPlayersWithBet++
+          if(!this._eligiblePlayers.includes(index)){
+            this._eligiblePlayers.push(index);
+          }
         }
       });
+
+      if(numberOfPlayersWithBet === 1) {
+        this._uncalledChips = minBet;
+      }
 
       return minBet;
     }
@@ -83,4 +99,30 @@ export default class Pot {
   totalNumberOfBets(): number {
     return this._numberPlayersWithNonZeroBet;
   }
+
+  uncalledChips(): number {
+    return this._uncalledChips
+  }
+
+  setUncalledChips(amount: number) {
+    this._uncalledChips = amount;
+  }
+
+  setTotalRake(amount: number) {
+    this._rakeInfo.totalRake = amount;
+  }
+
+  addToIndividualRake(amount: number, index: number) {
+    if(this._rakeInfo.rakePerPlayer[index]){
+      this._rakeInfo.rakePerPlayer[index] += amount;
+    } else {
+      this._rakeInfo.rakePerPlayer[index] = amount;
+    }
+
+  }
+
+  rake(): RakeInfo {
+    return this._rakeInfo;
+  }
+
 }

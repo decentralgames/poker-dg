@@ -2,7 +2,7 @@ import { SeatArray } from 'types/seat-array';
 import { SeatIndex } from 'types/seat-index';
 import { ForcedBets } from 'types/forced-bets';
 import CommunityCards, { RoundOfBetting } from './community-cards';
-import { Action, ActionRange } from './dealer';
+import { Action, ActionRange, RakeSettings } from './dealer';
 import Pot from './pot';
 import { HoleCards } from 'types/hole-cards';
 import { Chips } from 'types/chips';
@@ -29,6 +29,8 @@ export default class Table {
     private _communityCards?;
     private _dealer?;
     private _staged;
+    private _rakeEnabled;
+    private _rakeSettings;
     constructor(forcedBets: ForcedBets, numSeats?: number);
     playerToAct(): SeatIndex;
     button(): SeatIndex;
@@ -41,6 +43,7 @@ export default class Table {
     pots(): Pot[];
     forcedBets(): ForcedBets;
     setForcedBets(forcedBets: ForcedBets): void;
+    setRake(rakeEnabled: boolean, rakeSettings: RakeSettings): void;
     numSeats(): number;
     startHand(seat?: number): void;
     handInProgress(): boolean;

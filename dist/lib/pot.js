@@ -8,7 +8,10 @@ var Pot = /** @class */ (function () {
     function Pot() {
         this._eligiblePlayers = [];
         this._size = 0;
+        this._aggregateFoldedAmountAdded = 0;
         this._numberPlayersWithNonZeroBet = 0;
+        this._uncalledChips = 0;
+        this._rakeInfo = { totalRake: 0, rakePerPlayer: {} };
     }
     Pot.prototype.size = function () {
         return this._size;
@@ -19,9 +22,13 @@ var Pot = /** @class */ (function () {
     Pot.prototype.removePlayer = function (player) {
         this._eligiblePlayers = this._eligiblePlayers.filter(function (index) { return index != player; });
     };
-    Pot.prototype.add = function (amount) {
+    Pot.prototype.add = function (amount, isFoldedBet) {
+        if (isFoldedBet === void 0) { isFoldedBet = false; }
         (0, assert_1.default)(amount >= 0, 'Cannot add a negative amount to the pot');
         this._size += amount;
+        if (isFoldedBet) {
+            this._aggregateFoldedAmountAdded += amount;
+        }
     };
     Pot.prototype.collectBetsFrom = function (players) {
         var _this = this;
@@ -52,21 +59,46 @@ var Pot = /** @class */ (function () {
                     acc = player.betSize();
                 return acc;
             }, firstBetter.betSize());
-            // Deduct that bet from all the players, and add it to the pot.
-            this._eligiblePlayers = [];
+            var numberOfPlayersWithBet_1 = 0;
             players.forEach(function (player, index) {
                 if (player !== null && player.betSize() !== 0) {
                     _this._numberPlayersWithNonZeroBet++;
                     player.takeFromBet(minBet_1);
                     _this._size += minBet_1;
-                    _this._eligiblePlayers.push(index);
+                    numberOfPlayersWithBet_1++;
+                    if (!_this._eligiblePlayers.includes(index)) {
+                        _this._eligiblePlayers.push(index);
+                    }
                 }
             });
+            if (numberOfPlayersWithBet_1 === 1) {
+                this._uncalledChips = minBet_1;
+            }
             return minBet_1;
         }
     };
     Pot.prototype.totalNumberOfBets = function () {
         return this._numberPlayersWithNonZeroBet;
+    };
+    Pot.prototype.uncalledChips = function () {
+        return this._uncalledChips;
+    };
+    Pot.prototype.setUncalledChips = function (amount) {
+        this._uncalledChips = amount;
+    };
+    Pot.prototype.setTotalRake = function (amount) {
+        this._rakeInfo.totalRake = amount;
+    };
+    Pot.prototype.addToIndividualRake = function (amount, index) {
+        if (this._rakeInfo.rakePerPlayer[index]) {
+            this._rakeInfo.rakePerPlayer[index] += amount;
+        }
+        else {
+            this._rakeInfo.rakePerPlayer[index] = amount;
+        }
+    };
+    Pot.prototype.rake = function () {
+        return this._rakeInfo;
     };
     return Pot;
 }());

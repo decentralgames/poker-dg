@@ -33,6 +33,7 @@ export default class PotManager {
 
   getFoldedBetsContributions(minBet: number): number {
     let foldedContribution: number = 0;
+    
     for(let i = 0; i < this._nonZeroFoldedBets.length; i++) {
       if(this._nonZeroFoldedBets[i] > minBet && this._nonZeroFoldedBets[i] > 0){
         foldedContribution += minBet;
@@ -70,6 +71,7 @@ export default class PotManager {
         foldedBetContributionsToPot
       );
       this._pots[this._pots.length - 1].add(aggregateFoldedBetsConsumedAmount);
+
       this._aggregateFoldedBets -= aggregateFoldedBetsConsumedAmount;
       if (
         players.filter((player) => player !== null && player.betSize() !== 0)

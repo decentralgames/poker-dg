@@ -27,6 +27,7 @@ export default class BettingRound {
   private _players: SeatArray;
   private _round: Round;
   private _biggestBet: Chips;
+  private _biggestCall: number = 0;
   private _minRaise: Chips;
   private _blinds: Blinds;
   private _roundOfBetting: RoundOfBetting;
@@ -100,6 +101,10 @@ export default class BettingRound {
     return this._round.numActivePlayers();
   }
 
+  biggestCall(): number {
+    return this._biggestCall
+  }
+
   legalActions(): ActionRange {
     const player = this._players[this._round.playerToAct()];
     assert(player !== null);
@@ -130,6 +135,7 @@ export default class BettingRound {
       // update min raise only if player does not shove before matching current raise
       const playerRaise = bet - this._biggestBet;
       this._minRaise = (playerRaise >= this._minRaise) ? playerRaise : this._minRaise;
+      this._biggestCall = this._biggestBet;
       this._biggestBet = bet;
       let actionFlag = RoundAction.AGGRESSIVE;
       if (player.stack() === 0) {
@@ -137,12 +143,16 @@ export default class BettingRound {
       }
       this._round.actionTaken(actionFlag);
     } else if (action === Action.MATCH) {
-      player.bet(Math.min(this._biggestBet, player.totalChips()));
+      const betAmount = Math.min(this._biggestBet, player.totalChips())
+      player.bet(betAmount);
       let actionFlag = RoundAction.PASSIVE;
       if (player.stack() === 0) {
         actionFlag |= RoundAction.LEAVE;
       }
       this._round.actionTaken(actionFlag);
+      if(betAmount > this._biggestCall) {
+        this._biggestCall = betAmount;
+      }
     } else {
       assert(action === Action.LEAVE);
       this._round.actionTaken(RoundAction.LEAVE, true);

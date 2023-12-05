@@ -49,6 +49,7 @@ exports.ActionRange = ActionRange;
 var BettingRound = /** @class */ (function () {
     function BettingRound(players, nonFoldedPlayers, firstToAct, minRaise, blinds, roundOfBetting, biggestBet) {
         if (biggestBet === void 0) { biggestBet = 0; }
+        this._biggestCall = 0;
         this._round = new round_1.default(players.map(function (player) { return !!player; }), nonFoldedPlayers, firstToAct);
         this._players = players;
         this._biggestBet = biggestBet;
@@ -91,6 +92,9 @@ var BettingRound = /** @class */ (function () {
     BettingRound.prototype.numActivePlayers = function () {
         return this._round.numActivePlayers();
     };
+    BettingRound.prototype.biggestCall = function () {
+        return this._biggestCall;
+    };
     BettingRound.prototype.legalActions = function () {
         var player = this._players[this._round.playerToAct()];
         (0, assert_1.default)(player !== null);
@@ -117,6 +121,7 @@ var BettingRound = /** @class */ (function () {
             // update min raise only if player does not shove before matching current raise
             var playerRaise = bet - this._biggestBet;
             this._minRaise = (playerRaise >= this._minRaise) ? playerRaise : this._minRaise;
+            this._biggestCall = this._biggestBet;
             this._biggestBet = bet;
             var actionFlag = round_1.Action.AGGRESSIVE;
             if (player.stack() === 0) {
@@ -125,12 +130,16 @@ var BettingRound = /** @class */ (function () {
             this._round.actionTaken(actionFlag);
         }
         else if (action === Action.MATCH) {
-            player.bet(Math.min(this._biggestBet, player.totalChips()));
+            var betAmount = Math.min(this._biggestBet, player.totalChips());
+            player.bet(betAmount);
             var actionFlag = round_1.Action.PASSIVE;
             if (player.stack() === 0) {
                 actionFlag |= round_1.Action.LEAVE;
             }
             this._round.actionTaken(actionFlag);
+            if (betAmount > this._biggestCall) {
+                this._biggestCall = betAmount;
+            }
         }
         else {
             (0, assert_1.default)(action === Action.LEAVE);
