@@ -16,7 +16,7 @@ export default class Round {
   private _firstAction: boolean = true;
   private _numActivePlayers: number = 0;
   private _actionTakenInRound: boolean[]; // If player acted in the current round
-
+  
   constructor(
     activePlayers: boolean[],
     nonFoldedPlayers: boolean[],

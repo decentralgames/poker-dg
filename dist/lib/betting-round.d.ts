@@ -18,6 +18,7 @@ export default class BettingRound {
     private _players;
     private _round;
     private _biggestBet;
+    private _biggestCall;
     private _minRaise;
     private _blinds;
     private _roundOfBetting;
@@ -32,6 +33,7 @@ export default class BettingRound {
     nonFoldedPlayers(): boolean[];
     actionTakenInRound(): boolean[];
     numActivePlayers(): number;
+    biggestCall(): number;
     legalActions(): ActionRange;
     actionTaken(action: Action, bet?: Chips): void;
     standUp(seat: number): void;

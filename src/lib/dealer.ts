@@ -41,6 +41,10 @@ export enum Action {
   RAISE = 1 << 4,
 }
 
+export interface RakeSettings {
+  rakePercentage: number;
+  maxRake: number;
+}
 export default class Dealer {
   private readonly _button: SeatIndex = 0;
   private readonly _communityCards: CommunityCards;
@@ -56,6 +60,8 @@ export default class Dealer {
   private _bettingRoundsCompleted: boolean = false;
   private _potManager: PotManager;
   private _winners: [SeatIndex, Hand, HoleCards][][];
+  private _rakeEnabled: boolean = false;
+  private _rakeSettings: RakeSettings = {maxRake: 0, rakePercentage: 0};
 
   constructor(
     players: SeatArray,
@@ -63,7 +69,9 @@ export default class Dealer {
     forcedBets: ForcedBets,
     deck: Deck,
     communityCards: CommunityCards,
-    numSeats: number = 9
+    numSeats: number = 9,
+    rakeEnabled: boolean = false,
+    rakeSettings: RakeSettings
   ) {
     this._players = players;
     this._button = button;
@@ -73,6 +81,8 @@ export default class Dealer {
     this._potManager = new PotManager();
     this._holeCards = new Array(numSeats).fill(null);
     this._winners = [];
+    this._rakeEnabled = rakeEnabled,
+    this._rakeSettings = rakeSettings,
 
     assert(deck.length === 52, 'Deck must be whole');
     assert(
@@ -202,9 +212,11 @@ export default class Dealer {
   }
 
   pots(): Pot[] {
-    assert(this.handInProgress(), 'Hand must be in progress');
+   //assert(this.handInProgress(), 'Hand must be in progress');
     return this._potManager.pots();
   }
+
+  
 
   button(): SeatIndex {
     return this._button;
@@ -295,6 +307,8 @@ export default class Dealer {
           this._potManager.pots()[1].size() === 0) &&
         this._potManager.pots()[0].eligiblePlayers().length === 1
       ) {
+        const uncalledChips = (this._bettingRound?.biggestBet() ?? 0) - (this._bettingRound?.biggestCall() ?? 0)
+        this._potManager.pots()[0].setUncalledChips(uncalledChips)
         // ...there is no need to deal the undealt community cards.
       } else {
         this.dealCommunityCards();
@@ -359,12 +373,27 @@ export default class Dealer {
       const index = this._potManager.pots()[0].eligiblePlayers()[0];
       const player = this._players[index];
       assert(player !== null);
-      player.addToStack(this._potManager.pots()[0].size());
+
+      const pot = this._potManager.pots()[0]
+      let chipsToRakeForPot = 0;
+       if(!this._rakeEnabled) {
+      } else if(this._communityCards.cards().length < 3) {
+      } else {
+        const chipsRemainingBeforeRakeCap = this._rakeSettings.maxRake;
+        const winnerSeat = pot.eligiblePlayers()[0];
+        const winner = this._players[winnerSeat];
+        const winnerTotalWager = winner?.betSize();
+        const potentialRake = Math.floor(this._rakeSettings.rakePercentage*(pot.size() - pot.uncalledChips())/100.0);
+        chipsToRakeForPot = Math.min(potentialRake, chipsRemainingBeforeRakeCap);
+      }
+      player.addToStack(this._potManager.pots()[0].size() -  chipsToRakeForPot);
+      pot.setTotalRake(chipsToRakeForPot)
+      pot.addToIndividualRake(chipsToRakeForPot, index)
       return this._players;
 
       // TODO: Also, no reveals in this case. Reveals are only necessary when there is >=2 players.
     }
-
+    let totalChipsRaked = 0;
     for (const pot of this._potManager.pots()) {
       const playerResults: [SeatIndex, Hand][] = pot
         .eligiblePlayers()
@@ -386,9 +415,31 @@ export default class Dealer {
         }
       );
       const numberOfWinners = lastWinnerIndex === -1 ? 1 : lastWinnerIndex + 1;
-      let oddChips = pot.size() % numberOfWinners;
-      const payout = (pot.size() - oddChips) / numberOfWinners;
+
+      let potElligibleForRake = false;
+      let chipsToRakeForPot = 0;
+      if(!this._rakeEnabled) {
+        potElligibleForRake = false;
+      } else if(pot.eligiblePlayers().length === 1) {
+        potElligibleForRake = false;
+      } else if (totalChipsRaked > this._rakeSettings.maxRake){
+        potElligibleForRake = false;
+      } else if(this._communityCards.cards().length < 3) {
+        potElligibleForRake = false;
+      } else if (totalChipsRaked < this._rakeSettings.maxRake) {
+        const chipsRemainingBeforeRakeCap = this._rakeSettings.maxRake - totalChipsRaked;
+        const potentialRake = Math.floor(this._rakeSettings.rakePercentage*pot.size()/100.0);
+        chipsToRakeForPot = Math.min(potentialRake, chipsRemainingBeforeRakeCap);
+      }
+
+      let oddChips = (pot.size() - chipsToRakeForPot) % numberOfWinners;
+      totalChipsRaked+=chipsToRakeForPot;
+      pot.setTotalRake(chipsToRakeForPot);
+      const payout = ((pot.size() - oddChips - chipsToRakeForPot) / numberOfWinners);
       const winningPlayerResults = playerResults.slice(0, numberOfWinners);
+     
+      let rakeRemainderChips = chipsToRakeForPot % numberOfWinners;
+      const rakePerPlayer = (totalChipsRaked - rakeRemainderChips)/numberOfWinners;
 
       winningPlayerResults.forEach((playerResult: [SeatIndex, Hand]) => {
         const [seatIndex] = playerResult;
@@ -399,6 +450,9 @@ export default class Dealer {
         } else {
           this._players[seatIndex]?.addToStack(payout);
         }
+        pot.addToIndividualRake(rakePerPlayer,seatIndex);
+
+        //TODO this._players[seatIndex]?.chipsRaked = Math.floor(chipsToRakeForPot / numberOfWinners) ; 
       });
 
       this._winners.push(
@@ -425,6 +479,25 @@ export default class Dealer {
           assert(winner !== null);
           winner.addToStack(1);
           oddChips--;
+        }
+      }
+
+      // Distribute raked amounts remaining chips
+      if (rakeRemainderChips !== 0) {
+        // Distribute the odd chips to the first players, counting clockwise, after the dealer button
+        const winners: SeatArray = new Array(this._players.length).fill(null);
+        winningPlayerResults.forEach((playerResult: [SeatIndex, Hand]) => {
+          const [seatIndex] = playerResult;
+          winners[seatIndex] = this._players[seatIndex];
+        });
+
+        let seat = this._button;
+        while (rakeRemainderChips !== 0) {
+          seat = nextOrWrap(winners, seat);
+          const winner = winners[seat];
+          assert(winner !== null);
+          pot.addToIndividualRake(1,seat)
+          rakeRemainderChips--;
         }
       }
     }
@@ -492,4 +565,5 @@ export default class Dealer {
     }
     this._communityCards.deal(cards);
   }
+
 }

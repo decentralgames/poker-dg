@@ -68,8 +68,9 @@ var Action;
     Action[Action["RAISE"] = 16] = "RAISE";
 })(Action = exports.Action || (exports.Action = {}));
 var Dealer = /** @class */ (function () {
-    function Dealer(players, button, forcedBets, deck, communityCards, numSeats) {
+    function Dealer(players, button, forcedBets, deck, communityCards, numSeats, rakeEnabled, rakeSettings) {
         if (numSeats === void 0) { numSeats = 9; }
+        if (rakeEnabled === void 0) { rakeEnabled = false; }
         this._button = 0;
         this._smallBlindIndex = 0;
         this._bigBlindIndex = 0;
@@ -77,6 +78,8 @@ var Dealer = /** @class */ (function () {
         this._handInProgress = false;
         this._roundOfBetting = community_cards_1.RoundOfBetting.PREFLOP;
         this._bettingRoundsCompleted = false;
+        this._rakeEnabled = false;
+        this._rakeSettings = { maxRake: 0, rakePercentage: 0 };
         this._players = players;
         this._button = button;
         this._forcedBets = forcedBets;
@@ -85,7 +88,9 @@ var Dealer = /** @class */ (function () {
         this._potManager = new pot_manager_1.default();
         this._holeCards = new Array(numSeats).fill(null);
         this._winners = [];
-        (0, assert_1.default)(deck.length === 52, 'Deck must be whole');
+        this._rakeEnabled = rakeEnabled,
+            this._rakeSettings = rakeSettings,
+            (0, assert_1.default)(deck.length === 52, 'Deck must be whole');
         (0, assert_1.default)(communityCards.cards().length === 0, 'No community cards should have been dealt');
     }
     Dealer.isValid = function (action) {
@@ -199,7 +204,7 @@ var Dealer = /** @class */ (function () {
         return actionRange;
     };
     Dealer.prototype.pots = function () {
-        (0, assert_1.default)(this.handInProgress(), 'Hand must be in progress');
+        //assert(this.handInProgress(), 'Hand must be in progress');
         return this._potManager.pots();
     };
     Dealer.prototype.button = function () {
@@ -256,7 +261,7 @@ var Dealer = /** @class */ (function () {
         }
     };
     Dealer.prototype.endBettingRound = function () {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         (0, assert_1.default)(!this._bettingRoundsCompleted, 'Betting rounds must not be completed');
         (0, assert_1.default)(!this.bettingRoundInProgress(), 'Betting round must not be in progress');
         this._potManager.collectBetsFrom(this._players);
@@ -266,6 +271,8 @@ var Dealer = /** @class */ (function () {
             if ((this._potManager.pots().length <= 1 ||
                 this._potManager.pots()[1].size() === 0) &&
                 this._potManager.pots()[0].eligiblePlayers().length === 1) {
+                var uncalledChips = ((_d = (_c = this._bettingRound) === null || _c === void 0 ? void 0 : _c.biggestBet()) !== null && _d !== void 0 ? _d : 0) - ((_f = (_e = this._bettingRound) === null || _e === void 0 ? void 0 : _e.biggestCall()) !== null && _f !== void 0 ? _f : 0);
+                this._potManager.pots()[0].setUncalledChips(uncalledChips);
                 // ...there is no need to deal the undealt community cards.
             }
             else {
@@ -277,8 +284,8 @@ var Dealer = /** @class */ (function () {
         else if (this._roundOfBetting < community_cards_1.RoundOfBetting.RIVER) {
             // Start the next betting round.
             this._roundOfBetting = (0, community_cards_1.next)(this._roundOfBetting);
-            this._players = (_d = (_c = this._bettingRound) === null || _c === void 0 ? void 0 : _c.players()) !== null && _d !== void 0 ? _d : [];
-            var nonFoldedPlayers = (_f = (_e = this._bettingRound) === null || _e === void 0 ? void 0 : _e.nonFoldedPlayers()) !== null && _f !== void 0 ? _f : [];
+            this._players = (_h = (_g = this._bettingRound) === null || _g === void 0 ? void 0 : _g.players()) !== null && _h !== void 0 ? _h : [];
+            var nonFoldedPlayers = (_k = (_j = this._bettingRound) === null || _j === void 0 ? void 0 : _j.nonFoldedPlayers()) !== null && _k !== void 0 ? _k : [];
             this._bettingRound = new betting_round_1.default(__spreadArray([], this._players, true), nonFoldedPlayers, this.nextOrWrap(this._button), this._forcedBets.blinds.big, this.blinds(), this._roundOfBetting);
             this.dealCommunityCards();
             (0, assert_1.default)(this._bettingRoundsCompleted === false);
@@ -315,10 +322,27 @@ var Dealer = /** @class */ (function () {
             var index = this._potManager.pots()[0].eligiblePlayers()[0];
             var player = this._players[index];
             (0, assert_1.default)(player !== null);
-            player.addToStack(this._potManager.pots()[0].size());
+            var pot = this._potManager.pots()[0];
+            var chipsToRakeForPot = 0;
+            if (!this._rakeEnabled) {
+            }
+            else if (this._communityCards.cards().length < 3) {
+            }
+            else {
+                var chipsRemainingBeforeRakeCap = this._rakeSettings.maxRake;
+                var winnerSeat = pot.eligiblePlayers()[0];
+                var winner = this._players[winnerSeat];
+                var winnerTotalWager = winner === null || winner === void 0 ? void 0 : winner.betSize();
+                var potentialRake = Math.floor(this._rakeSettings.rakePercentage * (pot.size() - pot.uncalledChips()) / 100.0);
+                chipsToRakeForPot = Math.min(potentialRake, chipsRemainingBeforeRakeCap);
+            }
+            player.addToStack(this._potManager.pots()[0].size() - chipsToRakeForPot);
+            pot.setTotalRake(chipsToRakeForPot);
+            pot.addToIndividualRake(chipsToRakeForPot, index);
             return this._players;
             // TODO: Also, no reveals in this case. Reveals are only necessary when there is >=2 players.
         }
+        var totalChipsRaked = 0;
         var _loop_1 = function (pot) {
             var playerResults = pot
                 .eligiblePlayers()
@@ -339,9 +363,32 @@ var Dealer = /** @class */ (function () {
                 return hand_1.default.compare(first, second) !== 0;
             });
             var numberOfWinners = lastWinnerIndex === -1 ? 1 : lastWinnerIndex + 1;
-            var oddChips = pot.size() % numberOfWinners;
-            var payout = (pot.size() - oddChips) / numberOfWinners;
+            var potElligibleForRake = false;
+            var chipsToRakeForPot = 0;
+            if (!this_1._rakeEnabled) {
+                potElligibleForRake = false;
+            }
+            else if (pot.eligiblePlayers().length === 1) {
+                potElligibleForRake = false;
+            }
+            else if (totalChipsRaked > this_1._rakeSettings.maxRake) {
+                potElligibleForRake = false;
+            }
+            else if (this_1._communityCards.cards().length < 3) {
+                potElligibleForRake = false;
+            }
+            else if (totalChipsRaked < this_1._rakeSettings.maxRake) {
+                var chipsRemainingBeforeRakeCap = this_1._rakeSettings.maxRake - totalChipsRaked;
+                var potentialRake = Math.floor(this_1._rakeSettings.rakePercentage * pot.size() / 100.0);
+                chipsToRakeForPot = Math.min(potentialRake, chipsRemainingBeforeRakeCap);
+            }
+            var oddChips = (pot.size() - chipsToRakeForPot) % numberOfWinners;
+            totalChipsRaked += chipsToRakeForPot;
+            pot.setTotalRake(chipsToRakeForPot);
+            var payout = ((pot.size() - oddChips - chipsToRakeForPot) / numberOfWinners);
             var winningPlayerResults = playerResults.slice(0, numberOfWinners);
+            var rakeRemainderChips = chipsToRakeForPot % numberOfWinners;
+            var rakePerPlayer = (totalChipsRaked - rakeRemainderChips) / numberOfWinners;
             winningPlayerResults.forEach(function (playerResult) {
                 var _a;
                 var seatIndex = playerResult[0];
@@ -352,6 +399,8 @@ var Dealer = /** @class */ (function () {
                 else {
                     (_a = _this._players[seatIndex]) === null || _a === void 0 ? void 0 : _a.addToStack(payout);
                 }
+                pot.addToIndividualRake(rakePerPlayer, seatIndex);
+                //TODO this._players[seatIndex]?.chipsRaked = Math.floor(chipsToRakeForPot / numberOfWinners) ; 
             });
             this_1._winners.push(winningPlayerResults.map(function (playerResult) {
                 var seatIndex = playerResult[0];
@@ -372,6 +421,23 @@ var Dealer = /** @class */ (function () {
                     (0, assert_1.default)(winner !== null);
                     winner.addToStack(1);
                     oddChips--;
+                }
+            }
+            // Distribute raked amounts remaining chips
+            if (rakeRemainderChips !== 0) {
+                // Distribute the odd chips to the first players, counting clockwise, after the dealer button
+                var winners_2 = new Array(this_1._players.length).fill(null);
+                winningPlayerResults.forEach(function (playerResult) {
+                    var seatIndex = playerResult[0];
+                    winners_2[seatIndex] = _this._players[seatIndex];
+                });
+                var seat = this_1._button;
+                while (rakeRemainderChips !== 0) {
+                    seat = (0, array_1.nextOrWrap)(winners_2, seat);
+                    var winner = winners_2[seat];
+                    (0, assert_1.default)(winner !== null);
+                    pot.addToIndividualRake(1, seat);
+                    rakeRemainderChips--;
                 }
             }
         };

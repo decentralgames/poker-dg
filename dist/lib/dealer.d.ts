@@ -22,6 +22,10 @@ export declare enum Action {
     BET = 8,
     RAISE = 16
 }
+export interface RakeSettings {
+    rakePercentage: number;
+    maxRake: number;
+}
 export default class Dealer {
     private readonly _button;
     private readonly _communityCards;
@@ -37,7 +41,9 @@ export default class Dealer {
     private _bettingRoundsCompleted;
     private _potManager;
     private _winners;
-    constructor(players: SeatArray, button: SeatIndex, forcedBets: ForcedBets, deck: Deck, communityCards: CommunityCards, numSeats?: number);
+    private _rakeEnabled;
+    private _rakeSettings;
+    constructor(players: SeatArray, button: SeatIndex, forcedBets: ForcedBets, deck: Deck, communityCards: CommunityCards, numSeats: number | undefined, rakeEnabled: boolean | undefined, rakeSettings: RakeSettings);
     static isValid(action: Action): boolean;
     static isAggressive(action: Action): boolean;
     handInProgress(): boolean;

@@ -2,7 +2,7 @@
 import Table, { AutomaticAction as AutomaticActionFlag } from '../lib/table';
 import { RoundOfBetting } from '../lib/community-cards';
 import { CardRank, CardSuit } from '../lib/card';
-import { Action as ActionFlag } from '../lib/dealer';
+import { Action as ActionFlag, RakeSettings } from '../lib/dealer';
 import ChipRange from '../lib/chip-range';
 import { SeatIndex } from 'types/seat-index';
 import { HandRanking } from '../lib/hand';
@@ -154,6 +154,7 @@ export default class Poker {
     return this._table.pots().map((pot) => ({
       size: pot.size(),
       eligiblePlayers: pot.eligiblePlayers(),
+      rake: pot.rake()
     }));
   }
 
@@ -176,6 +177,10 @@ export default class Poker {
   }): void {
     const { ante, bigBlind: big, smallBlind: small } = forcedBets;
     this._table.setForcedBets({ ante, blinds: { small, big } });
+  }
+
+  setRake(rakeEnabled: boolean, rakeSettings: RakeSettings) {
+    this._table.setRake(rakeEnabled,rakeSettings)
   }
 
   numSeats(): number {
