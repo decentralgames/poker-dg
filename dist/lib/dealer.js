@@ -322,15 +322,11 @@ var Dealer = /** @class */ (function () {
             var index = this._potManager.pots()[0].eligiblePlayers()[0];
             var player = this._players[index];
             (0, assert_1.default)(player !== null);
-            //TO DO -- add rake in this case
-            console.log("rake not applied yet", this._potManager.pots()[0].size());
             var pot = this._potManager.pots()[0];
             var chipsToRakeForPot = 0;
             if (!this._rakeEnabled) {
-                console.log("rake not elligible disabled");
             }
             else if (this._communityCards.cards().length < 3) {
-                console.log("rake not elligible flop not reached", pot.size());
             }
             else {
                 var chipsRemainingBeforeRakeCap = this._rakeSettings.maxRake;
@@ -339,7 +335,6 @@ var Dealer = /** @class */ (function () {
                 var winnerTotalWager = winner === null || winner === void 0 ? void 0 : winner.betSize();
                 var potentialRake = Math.floor(this._rakeSettings.rakePercentage * (pot.size() - pot.uncalledChips()) / 100.0);
                 chipsToRakeForPot = Math.min(potentialRake, chipsRemainingBeforeRakeCap);
-                console.log("rake calculation single player pot", this._rakeSettings.rakePercentage, this._rakeSettings.maxRake, chipsRemainingBeforeRakeCap, potentialRake, winnerTotalWager);
             }
             player.addToStack(this._potManager.pots()[0].size() - chipsToRakeForPot);
             pot.setTotalRake(chipsToRakeForPot);
@@ -370,30 +365,23 @@ var Dealer = /** @class */ (function () {
             var numberOfWinners = lastWinnerIndex === -1 ? 1 : lastWinnerIndex + 1;
             var potElligibleForRake = false;
             var chipsToRakeForPot = 0;
-            console.log("raking for pot", pot.size(), pot.totalNumberOfBets(), pot.eligiblePlayers());
             if (!this_1._rakeEnabled) {
                 potElligibleForRake = false;
-                console.log("rake not elligible disabled");
             }
             else if (pot.eligiblePlayers().length === 1) {
                 potElligibleForRake = false;
-                console.log("rake not elligible uncalled chips", pot.size());
             }
             else if (totalChipsRaked > this_1._rakeSettings.maxRake) {
                 potElligibleForRake = false;
-                console.log("rake not elligible rake max reached", pot.size());
             }
             else if (this_1._communityCards.cards().length < 3) {
                 potElligibleForRake = false;
-                console.log("rake not elligible flop not reached", pot.size());
             }
             else if (totalChipsRaked < this_1._rakeSettings.maxRake) {
                 var chipsRemainingBeforeRakeCap = this_1._rakeSettings.maxRake - totalChipsRaked;
                 var potentialRake = Math.floor(this_1._rakeSettings.rakePercentage * pot.size() / 100.0);
                 chipsToRakeForPot = Math.min(potentialRake, chipsRemainingBeforeRakeCap);
-                console.log("rake calculation", this_1._rakeSettings.rakePercentage, this_1._rakeSettings.maxRake, totalChipsRaked, chipsRemainingBeforeRakeCap, potentialRake);
             }
-            console.log("rake chips raked for pot ", chipsToRakeForPot);
             var oddChips = (pot.size() - chipsToRakeForPot) % numberOfWinners;
             totalChipsRaked += chipsToRakeForPot;
             pot.setTotalRake(chipsToRakeForPot);
